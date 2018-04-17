@@ -1,0 +1,23 @@
+<?php
+return array (
+  'widget_pos_desc.category_view_sidebar' => 'Position in the sidebar of the category_view template. Widgets here will only be visible if the \'Create Pages for Categories\' option is enabled. This position receives the current <code>$category</code> entity as context.',
+  'widget_pos_desc.conversation_list_sidebar' => 'Position in the sidebar while viewing a list of conversations.',
+  'widget_pos_desc.conversation_view_sidebar' => 'Position in the conversation_view template sidebar. This position receives the current <code>$conversation</code> entity as context.',
+  'widget_pos_desc.find_threads_sidebar' => 'Position inside the \'find threads\' sidebar, which is shown only when <i>Appearance &gt; Style properties &gt; Miscellaneous &gt; Find threads navigation style</i> is set to \'Side navigation\'.',
+  'widget_pos_desc.forum_list_above_nodes' => 'A position inside the main content area of the forum list above the node tree.',
+  'widget_pos_desc.forum_list_below_nodes' => 'A position inside the main content area of the forum list below the node tree.',
+  'widget_pos_desc.forum_list_sidebar' => 'Position inside the forum list sidebar for various stats and new content widgets.',
+  'widget_pos_desc.forum_new_posts_sidebar' => 'Position inside the forum new posts sidebar for various stats and new content widgets.',
+  'widget_pos_desc.forum_overview_bottom' => 'A position that appears at the bottom of the forum overview wrapper below the content of the forum list and the forum "New posts" tab.',
+  'widget_pos_desc.forum_overview_top' => 'A position that appears at the top of the forum overview wrapper used by the forum list and the forum "New posts" tab.',
+  'widget_pos_desc.forum_view_sidebar' => 'Position in the sidebar while viewing a list of threads or sub-forums in a forum. This position receives the current <code>$forum</code> entity as context.',
+  'widget_pos_desc.help_page_sidenav' => 'Position inside the Help sidenav, below the navigation block. Widgets here will appear off canvas on narrow displays.',
+  'widget_pos_desc.member_view_sidebar' => 'Position in the sidebar while viewing a member\'s profile. This position receives the current <code>$user</code> entity as context.',
+  'widget_pos_desc.member_wrapper_sidenav' => 'Displays inside the member wrapper template which wraps the notable members and member lists pages in the sidenav.',
+  'widget_pos_desc.online_list_sidebar' => 'Position inside the online_list template sidebar for various online user statistics.',
+  'widget_pos_desc.pub_sidebar_bottom' => 'Widget position that appears at the bottom of all public pages. Page specific widgets will always appear above this position.',
+  'widget_pos_desc.pub_sidebar_top' => 'Widget position that appears at the top of all public pages. Page specific widgets will always appear below this position.',
+  'widget_pos_desc.thread_view_sidebar' => 'Position in the sidebar while viewing a thread. This position receives the current <code>$thread</code> entity as context.',
+  'widget_pos_desc.whats_new_overview' => 'Position inside the whats_new template to display new and recent happenings. This occupies the main column so can support larger widgets.',
+  'widget_pos_desc.whats_new_sidenav' => 'Position inside the What\'s new sidenav, below the navigation block. Widgets here will appear off canvas on narrow displays.',
+);

@@ -1,0 +1,21 @@
+<?php
+return array (
+  'button.attach' => 'Đính kèm',
+  'button.cancel' => 'Hủy',
+  'button.confirm' => 'Confirm',
+  'button.copy' => 'Copy',
+  'button.delete' => 'Xóa',
+  'button.edit' => 'Chỉnh sửa',
+  'button.export' => 'Xuất',
+  'button.import' => 'Nhập',
+  'button.login' => 'Đăng nhập',
+  'button.merge' => 'Merge',
+  'button.move' => 'Move',
+  'button.preview' => 'Xem trước',
+  'button.purchase' => 'Purchase',
+  'button.save' => 'Lưu',
+  'button.search' => 'Tìm',
+  'button.sort' => 'Sắp xếp',
+  'button.submit' => 'Submit',
+  'button.translate' => 'Dịch',
+);
