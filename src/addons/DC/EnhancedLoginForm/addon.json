@@ -1,0 +1,14 @@
+{
+    "legacy_addon_id": "",
+    "title": "D.C Style - Enhanced Login Form",
+    "description": "Provide many types for your site's login form.",
+    "version_id": 1020000,
+    "version_string": "1.0.2",
+    "dev": "D.C Style",
+    "dev_url": "https://fb.com/DumpPenguin",
+    "faq_url": "",
+    "support_url": "https://xfv2.com",
+    "extra_urls": [],
+    "require": [],
+    "icon": "logo.png"
+}

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<template_modifications>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatSidebarTop" description="Widget position sidebar top." execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[#(<xf:foreach loop="\$sidebar" value="\$sidebarHtml">.*)(</xf:foreach>)#sU]]></find>
+    <replace><![CDATA[<xf:widgetpos id="siropu_chat_sidebar_top" context-position="sidebar_top" />
+$0]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatSidebarBottom" description="Widget position sidebar bottom." execution_order="10" enabled="1" action="preg_replace">
+    <find><![CDATA[#(<xf:foreach loop="\$sidebar" value="\$sidebarHtml">.*)(</xf:foreach>)#sU]]></find>
+    <replace><![CDATA[$0
+<xf:widgetpos id="siropu_chat_sidebar_bottom" context-position="sidebar_bottom" />]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatFooter" description="Widget position all pages." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[</footer>]]></find>
+    <replace><![CDATA[$0
+<xf:widgetpos id="siropu_chat_all_pages" context-position="all_pages" />]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatAboveContent" description="Widget position above content." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<div class="p-body-pageContent">{$content|raw}</div>]]></find>
+    <replace><![CDATA[<xf:widgetpos id="siropu_chat_above_content" context-position="above_content" />
+$0]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatBelowContent" description="Widget position below content." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<div class="p-body-pageContent">{$content|raw}</div>]]></find>
+    <replace><![CDATA[$0
+<xf:widgetpos id="siropu_chat_below_content" context-position="below_content" />]]></replace>
+  </modification>
+  <modification type="public" template="PAGE_CONTAINER" modification_key="siropuChatNavBadge" description="Add custom CSS class for chat navigation badge." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[badge--highlighted]]></find>
+    <replace><![CDATA[$0{{ ($navId == 'siropuChat' AND $nav.counter >= 1) ? ' badge--active' : '' }}]]></replace>
+  </modification>
+  <modification type="public" template="core.less" modification_key="siropuChatBadge" description="Add custom CSS for chat navigation badge." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[{{ include('core_badge.less') }}]]></find>
+    <replace><![CDATA[$0
+{{ include('siropu_chat_badge.less') }}]]></replace>
+  </modification>
+  <modification type="public" template="forum_list" modification_key="siropuChatForumListAbove" description="Widget position above forum list." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:macro name="node_list" arg-children="{$nodeTree}" arg-extras="{$nodeExtras}" />]]></find>
+    <replace><![CDATA[<xf:widgetpos id="siropu_chat_above_forum_list" context-position="above_forum_list" />
+$0]]></replace>
+  </modification>
+  <modification type="public" template="forum_list" modification_key="siropuChatForumListBelow" description="Widget position below forum list." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<xf:macro name="node_list" arg-children="{$nodeTree}" arg-extras="{$nodeExtras}" />]]></find>
+    <replace><![CDATA[$0
+<xf:widgetpos id="siropu_chat_below_forum_list" context-position="below_forum_list" />]]></replace>
+  </modification>
+  <modification type="admin" template="helper_criteria" modification_key="siropu_chat_helper_criteria_user" description="Add chat user criteria." execution_order="10" enabled="1" action="str_replace">
+    <find><![CDATA[<!--[XF:user:content_after_messages]-->]]></find>
+    <replace><![CDATA[$0
+<xf:option name="user_criteria[siropu_chat_messages_posted][rule]" value="siropu_chat_messages_posted" selected="{$criteria.siropu_chat_messages_posted}"
+	label="{{ phrase('siropu_chat_user_has_posted_at_least_x_messages:') }}">
+	<xf:numberbox name="user_criteria[siropu_chat_messages_posted][data][messages_posted]" value="{$criteria.siropu_chat_messages_posted.messages_posted}"
+		size="5" min="0" step="1" />
+</xf:option>
+
+<xf:option name="user_criteria[siropu_chat_messages_maximum][rule]" value="siropu_chat_messages_maximum" selected="{$criteria.siropu_chat_messages_maximum}"
+	label="{{ phrase('siropu_chat_user_has_posted_no_more_than_x_messages:') }}">
+	<xf:numberbox name="user_criteria[siropu_chat_messages_maximum][data][messages_maximum]" value="{$criteria.siropu_chat_messages_maximum.messages_maximum}"
+		size="5" min="0" step="1" />
+</xf:option>]]></replace>
+  </modification>
+</template_modifications>

@@ -1,0 +1,20 @@
+
+@font-face {
+  font-family: 'ApexRounded-Book';
+  src: url('ApexRounded-Book.eot?#iefix') format('embedded-opentype'),
+      url('ApexRounded-Book.woff') format('woff'),
+      url('ApexRounded-Book.ttf')  format('truetype'),
+      url('ApexRounded-Book.svg#ApexRounded-Book') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'ApexRounded-Book';
+  src: url('ApexRounded-Medium.eot?#iefix') format('embedded-opentype'),
+    url('ApexRounded-Medium.woff') format('woff'),
+    url('ApexRounded-Medium.ttf')  format('truetype'),
+    url('ApexRounded-Medium.svg#ApexRounded-Medium') format('svg');
+  font-weight: 700;
+  font-style: normal;
+}

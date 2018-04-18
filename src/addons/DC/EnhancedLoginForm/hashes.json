@@ -1,0 +1,10 @@
+{
+    "src/addons/DC/EnhancedLoginForm/addon.json": "82c15c2e750556fc0ccd7060dd95a578107e8f819f0dbbdd7efa59f7fb9f825a",
+    "src/addons/DC/EnhancedLoginForm/logo.png": "6e87847438d3d45f0f2776be3bda2b30b9a8e0f8a2aef0421763237d395ef3c8",
+    "src/addons/DC/EnhancedLoginForm/_data/options.xml": "dfea617a66b5939a613f61b9703ba4381be05c703a1090aa663b04bbe0030c2d",
+    "src/addons/DC/EnhancedLoginForm/_data/option_groups.xml": "a0d2cd068de4f53e78b6d3e3d55f4f891b93bd9ac704e10cdda280a68c22ac13",
+    "src/addons/DC/EnhancedLoginForm/_data/phrases.xml": "792197820c1943a37abe3dd7a8edf1a78b42eba0e2b0b9ef09704f38b02dae81",
+    "src/addons/DC/EnhancedLoginForm/_data/templates.xml": "09fc420c65b47d2a43ce083762d3bfbca181e605aad7e40ce50abfd686e83bb1",
+    "src/addons/DC/EnhancedLoginForm/_data/template_modifications.xml": "2c43a045fbe77e8cc31a3b70274ee4af50018feb58307efa49414e355a9a43ec",
+    "styles/DC/EnhancedLoginForm/social_network.jpg": "4e1fdfa11f5678e248fadea3eda783b83603fe4ec0d81ea5da4dc48757d9557d"
+}

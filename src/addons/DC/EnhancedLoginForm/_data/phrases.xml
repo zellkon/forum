@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<phrases>
+  <phrase title="DC_ELF_login_using_social_account" version_id="1000000" version_string="1.0.0"><![CDATA[Click here to login using your socials account]]></phrase>
+  <phrase title="option.DC_ELF_loginForm_add" version_id="1000000" version_string="1.0.0"><![CDATA[Apply new Login Form to these classes]]></phrase>
+  <phrase title="option.DC_ELF_loginForm_flat_background" version_id="1000000" version_string="1.0.0"><![CDATA[Flat Style - Background]]></phrase>
+  <phrase title="option.DC_ELF_loginForm_gradient_background" version_id="1000000" version_string="1.0.0"><![CDATA[Gradient Style - Background]]></phrase>
+  <phrase title="option.DC_ELF_loginForm_social" version_id="1000000" version_string="1.0.0"><![CDATA[Social Login]]></phrase>
+  <phrase title="option.DC_ELF_loginForm_type" version_id="1000000" version_string="1.0.0"><![CDATA[Login Form Type]]></phrase>
+  <phrase title="option_explain.DC_ELF_loginForm_add" version_id="1000000" version_string="1.0.0"><![CDATA[Separate by ","]]></phrase>
+  <phrase title="option_explain.DC_ELF_loginForm_flat_background" version_id="1000000" version_string="1.0.0"><![CDATA[Change background image for Flat Login Form]]></phrase>
+  <phrase title="option_explain.DC_ELF_loginForm_gradient_background" version_id="1000000" version_string="1.0.0"><![CDATA[Change background image for Gradient Login Form]]></phrase>
+  <phrase title="option_explain.DC_ELF_loginForm_social" version_id="1010000" version_string="1.0.1"><![CDATA[Click here to enable social login button.<br/>
+<b>Note: Make sure you have added some social accounts at <p style="color:red">yoursite/admin.php?connected-accounts/</p></b>]]></phrase>
+  <phrase title="option_explain.DC_ELF_loginForm_type" version_id="1000000" version_string="1.0.0"><![CDATA[More types coming soon...]]></phrase>
+  <phrase title="option_group.DC_ELF" version_id="1000000" version_string="1.0.0"><![CDATA[[D.C Style] Enhanced Login Form]]></phrase>
+  <phrase title="option_group_description.DC_ELF" version_id="1000000" version_string="1.0.0"><![CDATA[Options for Login Form.]]></phrase>
+</phrases>

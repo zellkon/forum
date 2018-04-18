@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<options>
+  <option option_id="DC_ELF_loginForm_add" edit_format="textbox" data_type="string">
+    <default_value>.DC-loginForm--close, .p-navgroup-link--logIn</default_value>
+    <edit_format_params>rows=2</edit_format_params>
+    <relation group_id="DC_ELF" display_order="300"/>
+  </option>
+  <option option_id="DC_ELF_loginForm_flat_background" edit_format="textbox" data_type="string">
+    <default_value>https://4.bp.blogspot.com/-b4bD9e7u2Y4/UYUCtc0-8MI/AAAAAAAABOA/M3jKqE3hZvs/s1600/tumblr_leoebqIWbE1qe7guko1_1280.jpg</default_value>
+    <relation group_id="DC_ELF" display_order="100"/>
+  </option>
+  <option option_id="DC_ELF_loginForm_gradient_background" edit_format="textbox" data_type="string">
+    <default_value>https://www.grandvincent-marion.fr/_codepen/bg.jpg</default_value>
+    <relation group_id="DC_ELF" display_order="200"/>
+  </option>
+  <option option_id="DC_ELF_loginForm_social" edit_format="onoff" data_type="string">
+    <default_value>1</default_value>
+    <relation group_id="DC_ELF" display_order="2"/>
+  </option>
+  <option option_id="DC_ELF_loginForm_type" edit_format="radio" data_type="string">
+    <default_value>default</default_value>
+    <edit_format_params>default=Default Login Form
+flat=Flat Login Form
+gradient=Gradient Login Form
+purecss3=Pure CSS3 Login Form</edit_format_params>
+    <relation group_id="DC_ELF" display_order="1"/>
+  </option>
+</options>

@@ -1,0 +1,3505 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="public" title="SIROPU_CHAT_CONTAINER" version_id="200010" version_string="2.0.0"><![CDATA[<!DOCTYPE html>
+<html id="XF" lang="{$xf.language.language_code}" dir="{$xf.language.text_direction}"
+	data-app="public"
+	data-template="{$template}"
+	data-container-key="{$containerKey}"
+	data-content-key="{$contentKey}"
+	data-logged-in="{{ $xf.visitor.user_id ? 'true' : 'false' }}"
+	data-cookie-prefix="{$xf.cookie.prefix}"
+	class="has-no-js{{ $template ? ' template-' . $template : '' }}"
+	{{ $xf.runJobs ? ' data-run-jobs=""' : '' }}>
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<xf:set var="$siteName" value="{$xf.options.boardTitle}" />
+	<xf:set var="$h1"><xf:h1 fallback="{$siteName}" /></xf:set>
+	<xf:set var="$description"><xf:description /></xf:set>
+
+	<title><xf:title formatter="%s | %s" fallback="{$xf.options.boardTitle}" page="{$pageNumber}" /></title>
+
+	<xf:foreach loop="$head" value="$headTag">
+		{$headTag}
+	</xf:foreach>
+
+	<xf:if is="!$head.meta_site_name && $siteName is not empty">
+		<xf:macro template="metadata_macros" name="site_name" arg-siteName="{$siteName}" arg-output="{{ true }}" />
+	</xf:if>
+	<xf:if is="!$head.meta_title">
+		<xf:macro template="metadata_macros" name="title" arg-title="{{ page_title() ?: $siteName }}" arg-output="{{ true }}" />
+	</xf:if>
+	<xf:if is="!$head.meta_description && $description is not empty && $pageDescriptionMeta">
+		<xf:macro template="metadata_macros" name="description" arg-description="{$description}" arg-output="{{ true }}" />
+	</xf:if>
+	<xf:if is="!$head.meta_image_url && property('publicMetadataLogoUrl')">
+		<xf:macro template="metadata_macros" name="image_url"
+			arg-imageUrl="{{ base_url(property('publicMetadataLogoUrl'), true) }}"
+			arg-output="{{ true }}" />
+	</xf:if>
+
+	<xf:if is="property('metaThemeColor')">
+		<meta name="theme-color" content="{{ property('metaThemeColor') }}" />
+	</xf:if>
+
+	<xf:macro template="helper_js_global" name="head" arg-app="public" />
+
+	<xf:if is="property('publicFaviconUrl')">
+		<link rel="icon" type="image/png" href="{{ base_url(property('publicFaviconUrl')) }}" sizes="32x32" />
+	</xf:if>
+	<xf:if is="property('publicMetadataLogoUrl')">
+		<link rel="apple-touch-icon" href="{{ base_url(property('publicMetadataLogoUrl'), true) }}" />
+	</xf:if>
+	<xf:include template="google_analytics" />
+</head>
+
+<body id="siropuChatFullPage" data-template="{$template}">
+		<header class="p-header" id="header"></header>
+
+		{$content|raw}
+
+		<div class="u-bottomFixer js-bottomFixTarget">
+			<xf:if is="$notices.floating">
+				<xf:macro template="notice_macros" name="notice_list" arg-type="floating" arg-notices="{$notices.floating}" />
+			</xf:if>
+		</div>
+
+		<xf:macro template="helper_js_global" name="body" arg-app="public" arg-jsState="{$jsState}" />
+
+		{$ldJsonHtml|raw}
+</body>
+</html>]]></template>
+  <template type="public" title="alert_siropu_chat_conv_message_new" version_id="200010" version_string="2.0.0"><![CDATA[]]></template>
+  <template type="public" title="alert_siropu_chat_conv_new" version_id="200010" version_string="2.0.0"><![CDATA[{{ phrase('siropu_chat_x_started_a_private_conversation_with_you', {
+	'name': username_link($user, false, {'defaultname': $alert.username}),
+	'conv_url': link('chat/conversation/view', $content)
+}) }}]]></template>
+  <template type="public" title="alert_siropu_chat_lift_user_sanction" version_id="200010" version_string="2.0.0 Beta 1"><![CDATA[{{ phrase('siropu_chat_your_sanction_has_been_lifted') }}]]></template>
+  <template type="public" title="alert_siropu_chat_room_invite" version_id="200010" version_string="2.0.0"><![CDATA[{{ phrase('siropu_chat_x_invited_you_to_join_room_x', {
+	'name': username_link($user, false, {'defaultname': $alert.username}),
+	'room': '<a href="' . link('chat/room', $content) . '" class="fauxBlockLink-blockLink">' . $content.room_name . '</a>'
+}) }}]]></template>
+  <template type="public" title="alert_siropu_chat_room_message_mention" version_id="200010" version_string="2.0.0"><![CDATA[{{ phrase('siropu_chat_x_mentioned_you_in_a_chat_message', {
+	'name': username_link($user, false, {'defaultname': $alert.username}),
+	'message_url': link('chat/message/view', $content)
+}) }}]]></template>
+  <template type="public" title="alert_siropu_chat_sanction_apply" version_id="200010" version_string="2.0.0 Beta 1"><![CDATA[<xf:if is="$content.sanction_end">
+	<xf:if is="$content.sanction_reason">
+		{{ phrase('siropu_chat_you_have_banned_by_x_until_x_for_the_following_reason_x', {
+		'author': username_link($user, false, {'defaultname': $alert.username}),
+		'date': date_time($content.sanction_end),
+		'reason': $content.sanction_reason
+		}) }}
+		<xf:else />
+		{{ phrase('siropu_chat_you_have_banned_by_x_until_x', {
+		'author': username_link($user, false, {'defaultname': $alert.username}),
+		'date': date_time($content.sanction_end)
+		}) }}
+	</xf:if>
+	<xf:else />
+	<xf:if is="$content.sanction_reason">
+		{{ phrase('siropu_chat_you_have_banned_permanently_by_x_for_the_following_reason_x', {
+		'author': username_link($user, false, {'defaultname': $alert.username}),
+		'reason': $content.sanction_reason
+		}) }}
+		<xf:else />
+		{{ phrase('siropu_chat_you_have_banned_permanently_by_x', {
+		'author': username_link($user, false, {'defaultname': $alert.username})
+		}) }}
+	</xf:if>
+</xf:if>]]></template>
+  <template type="public" title="report_content_siropu_chat_conv_message" version_id="200010" version_string="2.0.0"><![CDATA[<div class="block-row block-row--separated">
+	{{ bb_code($report.content_info.message.text, 'siropu_chat_conv_message', $report.User) }}
+</div>]]></template>
+  <template type="public" title="report_content_siropu_chat_room_message" version_id="200010" version_string="2.0.0"><![CDATA[<div class="block-row block-row--separated">
+	{{ bb_code($report.content_info.message.text, 'siropu_chat_room_message', $report.User) }}
+</div>
+<div class="block-row block-row--separated block-row--minor">
+	<dl class="pairs pairs--inline">
+		<dt>{{ phrase('siropu_chat_room') }}</dt>
+		<dd><a href="{{ link('chat/room', $report.content_info) }}">{$report.content_info.room_name}</a></dd>
+	</dl>
+</div>]]></template>
+  <template type="admin" title="siropu_chat" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:title>{{ phrase('siropu_chat') }}</xf:title>
+<xf:description>{{ phrase('siropu_chat_admin_welcome') }}</xf:description>
+
+<div class="block">
+	<div class="block-container">
+		<ul class="block-body block-row">
+			<li><a href="{{ link('chat/commands') }}">{{ phrase('siropu_chat_commands') }}</a></li>
+			<li><a href="{{ link('chat/bot-responses') }}">{{ phrase('siropu_chat_bot_responses') }}</a></li>
+			<li><a href="{{ link('chat/bot-messages') }}">{{ phrase('siropu_chat_bot_messages') }}</a></li>
+		</ul>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat" version_id="2000370" version_string="2.0.3"><![CDATA[<xf:css src="siropu_chat.less" />
+
+<xf:js src="siropu/chat/core.js" min="1">
+	<xf:include template="siropu_chat_js" />
+</xf:js>
+
+<xf:css src="public:color_picker.less" />
+<xf:js src="xf/color_picker.js" min="1" />
+<script class="js-colorPickerData" type="application/json">{}</script>
+
+<xf:set var="$canJoinRooms" value="{{ ($xf.visitor.user_id AND $xf.options.siropuChatRooms AND $xf.visitor.canJoinSiropuChatRooms()) ? true : false }}" />
+<xf:set var="$canChatInPrivate" value="{{ ($xf.visitor.user_id AND $xf.options.siropuChatPrivateConversations AND $xf.visitor.canChatInPrivateSiropuChat()) ? true : false }}" />
+
+<xf:set var="$title">
+	<xf:if is="!$xf.options.siropuChatDynamicTitle">
+		{{ phrase('siropu_chat_header_title') }}
+	<xf:elseif is="$chat.channel == 'room' AND $chat.roomId" />
+		{$chat.rooms.{$chat.roomId}.room_name}
+	<xf:elseif is="$chat.channel == 'conv'" />
+		<xf:if is="$chat.convId">
+			{{ phrase('siropu_chat_conversation_with_x', {'user': $chat.convContacts.{$chat.convId}.Contact.username}) }}
+		<xf:else />
+			{{ phrase('siropu_chat_private_conversations') }}
+		</xf:if>
+	</xf:if>
+</xf:set>
+
+<div id="siropuChat" class="block {$chat.cssClass}" data-active="{{ $xf.visitor.isActiveSiropuChat() ? 'true' : 'false' }}" data-xf-init="siropu-chat">
+	<div class="block-container">
+		<div id="siropuChatHeader" class="block-header">
+			<i class="fa fa-comments-o" aria-hidden="true"></i> <span>{$title}</span>
+			<div id="siropuChatOptions">
+				<xf:if is="$xf.options.siropuChatRules">
+					<a href="{{ link('chat/rules') }}" title="{{ phrase('siropu_chat_rules') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-book" aria-hidden="true" ></i> <span>{{ phrase('siropu_chat_rules') }}</span></a>
+				</xf:if>
+				<a href="{{ link('chat/help') }}" title="{{ phrase('siropu_chat_help') }}" data-xf-click="overlay"><i class="fa fa-support" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_help') }}</span></a>
+				<a role="button" id="siropuChatToggleUsers" title="{{ phrase('siropu_chat_users') }}" data-xf-click="siropu-chat-toggle-users"><i class="fa fa-users" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_users') }}</span></a>
+				<a role="button" title="{{ phrase('siropu_chat_settings') }}" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"><i class="fa fa-cogs" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_settings') }}</span></a>
+				<div class="menu" data-menu="menu" aria-hidden="true">
+					<div class="menu-content">
+						<h3 class="menu-header">{{ phrase('siropu_chat_settings') }}</h3>
+						<form id="siropuChatSettings">
+							<fieldset>
+								<legend data-xf-click="siropu-chat-toggle-options">{{ phrase('siropu_chat_sound') }}</legend>
+								<xf:checkbox>
+									<xf:option name="sound[normal]" value="1" label="{{ phrase('siropu_chat_setting_option_normal_messages') }}" checked="{{ $chat.settings.sound.normal ? true : false }}" />
+									<xf:option name="sound[private]" value="1" label="{{ phrase('siropu_chat_setting_option_private_messages') }}" checked="{{ $chat.settings.sound.private ? true : false }}" />
+									<xf:option name="sound[whisper]" value="1" label="{{ phrase('siropu_chat_setting_option_whisper_messages') }}" checked="{{ $chat.settings.sound.whisper ? true : false }}" />
+									<xf:option name="sound[mention]" value="1" label="{{ phrase('siropu_chat_setting_option_mention_messages') }}" checked="{{ $chat.settings.sound.mention ? true : false }}" />
+									<xf:option name="sound[bot]" value="1" label="{{ phrase('siropu_chat_setting_option_bot_messages') }}" checked="{{ $chat.settings.sound.bot ? true : false }}" />
+								</xf:checkbox>
+							</fieldset>
+							<fieldset>
+								<legend data-xf-click="siropu-chat-toggle-options">{{ phrase('siropu_chat_desktop_notifications') }}</legend>
+								<xf:checkbox>
+									<xf:option name="notification[normal]" value="1" label="{{ phrase('siropu_chat_setting_option_normal_messages') }}" checked="{{ $chat.settings.notification.normal ? true : false }}" />
+									<xf:option name="notification[private]" value="1" label="{{ phrase('siropu_chat_setting_option_private_messages') }}" checked="{{ $chat.settings.notification.private ? true : false }}" />
+									<xf:option name="notification[whisper]" value="1" label="{{ phrase('siropu_chat_setting_option_whisper_messages') }}" checked="{{ $chat.settings.notification.whisper ? true : false }}" />
+									<xf:option name="notification[mention]" value="1" label="{{ phrase('siropu_chat_setting_option_mention_messages') }}" checked="{{ $chat.settings.notification.mention ? true : false }}" />
+									<xf:option name="notification[bot]" value="1" label="{{ phrase('siropu_chat_setting_option_bot_messages') }}" checked="{{ $chat.settings.notification.bot ? true : false }}" />
+								</xf:checkbox>
+							</fieldset>
+							<fieldset>
+								<legend data-xf-click="siropu-chat-toggle-options">{{ phrase('siropu_chat_miscellaneous') }}</legend>
+								<xf:checkbox>
+									<xf:option name="inverse" value="1" label="{{ phrase('siropu_chat_setting_option_inverse_message_direction') }}" checked="{{ $chat.settings.inverse ? true : false }}" />
+									<xf:option name="editor_on_top" value="1" label="{{ phrase('siropu_chat_setting_option_editor_on_top') }}" checked="{{ $chat.settings.editor_on_top ? true : false }}" />
+									<xf:option name="maximized" value="1" label="{{ phrase('siropu_chat_setting_option_maximized_mode') }}" checked="{{ $chat.settings.maximized ? true : false }}" />
+									<xf:option name="image_as_link" value="1" label="{{ phrase('siropu_chat_setting_option_images_as_links') }}" checked="{{ $chat.settings.image_as_link ? true : false }}" />
+									<xf:if is="$xf.options.siropuChatUserMentionAlert">
+										<xf:option name="mention_alert" value="1" label="{{ phrase('siropu_chat_setting_option_receive_mention_alerts') }}" checked="{{ $chat.settings.mention_alert ? true : false }}" />
+									</xf:if>
+									<xf:option name="hide_bot" value="1" label="{{ phrase('siropu_chat_setting_option_hide_bot') }}" checked="{{ $chat.settings.hide_bot ? true : false }}" />
+									<xf:option name="hide_status" value="1" label="{{ phrase('siropu_chat_setting_option_hide_status') }}" checked="{{ $chat.settings.hide_status ? true : false }}" />
+									<xf:option name="hide_chatters" value="1" label="{{ phrase('siropu_chat_setting_option_hide_chatter_list') }}" checked="{{ $chat.settings.hide_chatters ? true : false }}" />
+									<xf:option name="show_ignored" value="1" label="{{ phrase('siropu_chat_setting_option_show_ignored') }}" checked="{{ $chat.settings.show_ignored ? true : false }}" />
+									<xf:if is="!$chat.isChatPage">
+										<xf:option name="disable" value="1" label="{{ phrase('siropu_chat_setting_option_disable') }}" checked="{{ $chat.settings.disable ? true : false }}" />
+									</xf:if>
+								</xf:checkbox>
+							</fieldset>
+							<xf:if is="$xf.visitor.canSetMessageColorSiropuChat()">
+								<fieldset>
+									<legend>{{ phrase('siropu_chat_your_message_color') }}</legend>
+									<div class="inputGroup inputGroup--joined inputGroup--color" data-xf-init="color-picker" data-allow-palette="true">
+										<xf:textbox name="message_color" value="{$chat.settings.message_color}" readonly="readonly" />
+										<div class="inputGroup-text"><span class="colorPickerBox js-colorPickerTrigger"></span></div>
+									</div>
+								</fieldset>
+							</xf:if>
+							<xf:if is="$xf.visitor.canChangeDisplayModeSiropuChat()">
+								<fieldset>
+									<legend>{{ phrase('siropu_chat_display_mode') }}</legend>
+									<xf:select name="display_mode" value="{$chat.settings.display_mode}">
+										<xf:if is="$xf.options.siropuChatDisplayMode == 'custom' OR $xf.options.siropuChatDisplayMode == 'chat_page'">
+											<xf:option value="default">{{ phrase('siropu_chat_display_mode_default') }}</xf:option>
+										</xf:if>
+										<xf:option value="all_pages">{{ phrase('siropu_chat_display_mode_all_pages') }}</xf:option>
+										<xf:option value="above_forum_list">{{ phrase('siropu_chat_display_mode_above_forum_list') }}</xf:option>
+										<xf:option value="below_forum_list">{{ phrase('siropu_chat_display_mode_below_forum_list') }}</xf:option>
+										<xf:option value="above_content">{{ phrase('siropu_chat_display_mode_above_content') }}</xf:option>
+										<xf:option value="below_content">{{ phrase('siropu_chat_display_mode_below_content') }}</xf:option>
+										<xf:option value="sidebar_top">{{ phrase('siropu_chat_display_mode_sidebar_top') }}</xf:option>
+										<xf:option value="sidebar_bottom">{{ phrase('siropu_chat_display_mode_sidebar_bottom') }}</xf:option>
+									</xf:select>
+								</fieldset>
+							</xf:if>
+						</form>
+					</div>
+				</div>
+				<a role="button" title="{{ phrase('siropu_chat_options') }}" data-xf-click="menu" aria-expanded="false" aria-haspopup="true"><i class="fa fa-navicon" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_options') }}</span></a>
+				<div class="menu" data-menu="menu" aria-hidden="true">
+					<div class="menu-content">
+						<h3 class="menu-header">{{ phrase('siropu_chat_options') }}</h3>
+						<xf:if is="$xf.visitor.canSetSiropuChatStatus()">
+							<a href="{{ link('chat/update-status') }}" class="blockLink" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_update_status') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canCreateSiropuChatRooms()">
+							<a href="{{ link('chat/room/create') }}" class="blockLink" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_create_room') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canEditSiropuChatRules()">
+							<a href="{{ link('chat/edit-rules') }}" class="blockLink" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_edit_rules') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canEditSiropuChatNotice()">
+							<a href="{{ link('chat/edit-notice') }}" class="blockLink" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_edit_notice') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canEditSiropuChatAds()">
+							<a href="{{ link('chat/edit-ads') }}" class="blockLink" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_edit_ads') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canViewSiropuChatArchive()">
+							<a href="{{ link('chat/archive') }}" class="blockLink">{{ phrase('siropu_chat_view_archive') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canViewSiropuChatTopChatters()">
+							<a href="{{ link('chat/top-chatters') }}" class="blockLink">{{ phrase('siropu_chat_view_top_chatters') }}</a>
+						</xf:if>
+						<xf:if is="$xf.visitor.canViewSiropuChatSanctions()">
+							<a href="{{ link('chat/sanctions') }}" class="blockLink">{{ phrase('siropu_chat_view_sanctions') }}</a>
+						</xf:if>
+						<div class="menu-footer menu-footer--split">
+							<xf:if is="$xf.visitor.user_id">
+								<span class="menu-footer-main">
+									<a href="{{ link('chat/logout') }}" class="siropuChatLogout" data-xf-click="overlay"><i class="fa fa-sign-out" aria-hidden="true"></i> {{ phrase('siropu_chat_logout') }}</a>
+								</span>
+							</xf:if>
+							<xf:if is="!$chat.isFullPage">
+								<span class="menu-footer-opposite">
+									<a href="{{ link('chat/fullpage') }}" data-xf-click="siropu-chat-popup"><i class="fa fa-external-link" aria-hidden="true"></i> {{ phrase('siropu_chat_open_in_popup') }}</a>
+								</span>
+							</xf:if>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<xf:macro template="siropu_chat_notice_macros" name="notice" arg-notice="{$chat.notice}" />
+		<xf:if contentcheck="true">
+			<div id="siropuChatTabs"{{ !$canJoinRooms ? ' class="siropuChatNoRooms"' : '' }}>
+				<xf:contentcheck>
+					<xf:if is="$canJoinRooms AND !$chat.hideTabs">
+						<xf:foreach loop="$chat.rooms" value="$room">
+							<xf:if is="$room.isJoined()">
+								<xf:include template="siropu_chat_room_tab" />
+							</xf:if>
+						</xf:foreach>
+						<a role="button" data-target="room-list" data-title="{{ phrase('siropu_chat_browse_rooms')|for_attr }}"><i class="fa fa-folder-open-o" aria-hidden="true"></i> {{ phrase('siropu_chat_browse_rooms') }}</a>
+					</xf:if>
+					<xf:if is="$canChatInPrivate AND !$chat.hideTabs">
+						<span>
+							<a role="button" data-target="conv-list" data-title="{{ phrase('siropu_chat_private_conversations')|for_attr }}" {{ ($chat.convUnread AND $chat.channel != 'conv') ? ' class="siropuChatNewMessage"' : '' }}{{ $chat.channel == 'conv' ? ' class="siropuChatActiveTab"' : '' }}>{{ phrase('siropu_chat_private_conversations') }} <span class="siropuChatTabCount{{ $chat.convOnline ? 'Active' : 'Inactive' }}">{$chat.convOnline}</span></a>
+							<a role="button" data-target="conv-form" data-title="{{ phrase('siropu_chat_start_private_conversation')|for_attr }}"><i class="fa fa-user-plus" aria-hidden="true"></i></a>
+						</span>
+					</xf:if>
+				</xf:contentcheck>
+			</div>
+		</xf:if>
+		<xf:if is="$chat.settings.editor_on_top">
+			<xf:include template="siropu_chat_editor" />
+		</xf:if>
+		<div id="siropuChatContent">
+			<xf:if is="$chat.rooms is not empty">
+				<xf:foreach loop="$chat.rooms" key="$roomId" value="$room">
+					<xf:if is="$room.isJoined()">
+						<ul class="siropuChatRoom siropuChatUsers" data-room-id="{$roomId}"{{ ($room.isActive() AND $chat.channel == 'room' AND !$chat.isResponsive) ? ' style="display: block;"' : '' }}>
+							<xf:macro template="siropu_chat_user_list" name="room" arg-users="{$chat.users.{$roomId}}" arg-roomId="{$roomId}" arg-roomUserId="{$room.room_user_id}" />
+						</ul>
+						<ul class="siropuChatRoom siropuChatMessages" data-room-id="{$roomId}" data-autoscroll="1"{{ ($room.isActive() AND $chat.channel == 'room') ? ' style="display: block;"' : '' }}>
+							<xf:macro template="siropu_chat_message_list" name="room" arg-messages="{$chat.messages.{$roomId}}" />
+						</ul>
+					</xf:if>
+				</xf:foreach>
+			<xf:elseif is="$chat.channel == 'room'" />
+				<p id="siropuChatNoRoomsJoined" style="display: block;">{{ phrase('siropu_chat_no_rooms_joined') }}</p>
+			</xf:if>
+			<ul id="siropuChatRooms"></ul>
+			<xf:if is="$canChatInPrivate">
+				<ul class="siropuChatConversation siropuChatUsers"{{ $chat.channel == 'conv' ? ' style="display: block;"' : ''}}>
+					<xf:if is="$chat.convContacts is not empty">
+						<xf:macro template="siropu_chat_user_list" name="conversation" arg-conversations="{$chat.convContacts}" arg-unread="{$chat.convUnread}" />
+					<xf:else />
+						<li id="siropuChatNoConversations">
+							{{ phrase('siropu_chat_no_private_conversations_found') }}
+							<xf:macro template="siropu_chat_conversation_start" name="form" />
+						</li>
+					</xf:if>
+				</ul>
+				<xf:if is="$chat.convMessages is not empty">
+					<xf:foreach loop="$chat.convMessages" key="$convId" value="$messages">
+						<ul class="siropuChatConversation siropuChatMessages" data-conv-id="{$convId}" data-autoscroll="1"{{ ($xf.visitor.getLastConvIdSiropuChat() == $convId AND $chat.channel == 'conv' AND !$chat.isResponsive) ? ' style="display: block;"' : '' }}>
+							<xf:macro template="siropu_chat_message_list" name="conversation" arg-messages="{$messages}" channel="{$chat.channel}" />
+						</ul>
+					</xf:foreach>
+				</xf:if>
+				<div id="siropuChatStartConversation">
+					<xf:macro template="siropu_chat_conversation_start" name="form" />
+				</div>
+			</xf:if>
+		</div>
+		<xf:if is="!$chat.settings.editor_on_top">
+			<xf:include template="siropu_chat_editor" />
+		</xf:if>
+	</div>
+</div>
+
+<xf:if is="$chat.settings.display_mode == 'all_pages' AND !$chat.isChatPage">
+	<div id="siropuChatBar" class="block-container">
+		<div id="siropuChatBarMessageContainer">
+			<xf:if is="$chat.lastMessage is not empty">
+				<xf:macro template="siropu_chat_room_message_helper" name="message_content" arg-message="{$chat.lastMessage}" arg-lastRow="true" arg-isResponsive="{$chat.isResponsive}" />
+				<xf:date time="{$chat.lastMessage.message_date}" class="siropuChatDateTime" />
+				<xf:else />
+				<span class="siropuChatMessageText">
+					<xf:if is="$chat.rooms is not empty">
+						{{ phrase('siropu_chat_no_messages') }}
+						<xf:else />
+						{{ phrase('siropu_chat_no_rooms_joined') }}
+					</xf:if>
+				</span>
+			</xf:if>
+		</div>
+		<div id="siropuChatBarUserCount">
+			<a role="button">{{ phrase('siropu_chat_bar_title') }} <span>{$chat.userCount|number}</span></a>
+		</div>
+	</div>
+</xf:if>]]></template>
+  <template type="public" title="siropu_chat.less" version_id="2000370" version_string="2.0.3"><![CDATA[.siropuChatNoSelect()
+{
+	webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.siropuChatFixedPosition(@bottom)
+{
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: @bottom;
+	margin: 0 auto;
+	max-width: @xf-pageWidthMax - 20;
+	z-index: 500;
+}
+#siropuChat
+{
+	.block-container
+	{
+		.xf-siropuChatContainer();
+	}
+
+	a[role="button"],
+	{
+		cursor: pointer;
+		text-decoration: none;
+		.siropuChatNoSelect();
+	}
+	&.siropuChatAllPages
+	{
+		display: none;
+		.siropuChatFixedPosition(50px);
+	}
+	&:not(.siropuChatEditorTop)
+	{
+		.fr-dropdown-menu, .fr-popup
+		{
+			top: initial !important;
+			bottom: 32px !important;
+		}
+		.fr-popup .fr-arrow
+		{
+			display: none;
+		}
+	}
+	.bbWrapper
+	{
+		display: inline;
+	}
+	.fa
+	{
+		font-size: @xf-siropuChatIconFontSize;
+	}
+	.fa-book
+	{
+		color: @xf-siropuChatRulesIconColor;
+	}
+	.fa-support
+	{
+		color: @xf-siropuChatHelpIconColor;
+	}
+	.fa-users
+	{
+		color: @xf-siropuChatUsersIconColor;
+	}
+	.fa-cogs
+	{
+		color: @xf-siropuChatSettingsIconColor;
+	}
+	.fa-navicon
+	{
+		color: @xf-siropuChatOptionsIconColor;
+	}
+	.fa-eye-slash
+	{
+		color: crimson;
+	}
+}
+#siropuChatSettings
+{
+	font-size: 12px;
+	padding-top: 5px;
+
+	fieldset
+	{
+		border: 0;
+	}
+	legend
+	{
+		font-weight: bold;
+	}
+	.inputChoices > li
+	{
+		margin: 0;
+
+		input
+		{
+			top: 1px;
+		}
+	}
+	.inputGroup.inputGroup--color
+	{
+		width: auto;
+	}
+}
+#siropuChatOptions
+{
+	float: right;
+	margin-top: 5px;
+	font-size: 14px;
+
+	> a
+	{
+		margin-left: 10px;
+		text-decoration: none;
+
+		span
+		{
+			display: none;
+		}
+		i
+		{
+			&:hover
+			{
+				font-weight: bold;
+			}
+		}
+	}
+}
+#siropuChatToggleUsers
+{
+	display: none;
+}
+#siropuChatNotice
+{
+	padding: 10px;
+	border-bottom: 1px solid @xf-borderColor;
+	color: @xf-textColorDimmed;
+
+	> i
+	{
+		font-weight: bold;
+	}
+	> span
+	{
+		font-size: 12px;
+	}
+	> a
+	{
+		font-size: 10px;
+	}
+}
+#siropuChatTabs
+{
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+
+	.xf-siropuChatTabsContainer();
+
+	a
+	{
+		.xf-siropuChatTabsItem();
+
+		&:hover
+		{
+			.xf-siropuChatTabsItemHover();
+		}
+		&.siropuChatActiveTab
+		{
+			.xf-siropuChatTabsItemActive();
+		}
+		> span
+		{
+			.xf-siropuChatTabsItemBadge();
+
+			&.siropuChatTabCountActive
+			{
+				background: @xf-siropuChatActiveUserCountBadgeColor;
+				color: @xf-siropuChatActiveUserCountColor;
+			}
+			&.siropuChatTabCountInactive
+			{
+				background: @xf-siropuChatNoUserCountBadgeColor;
+				color: @xf-siropuChatNoUserCountColor;
+			}
+		}
+		&[data-target="room"]
+		{
+			margin-right: 10px;
+		}
+		&[data-target="conv-list"]
+		{
+			margin-right: 5px;
+		}
+	}
+	> span
+	{
+		margin-left: auto;
+	}
+}
+#siropuChatContent
+{
+	height: @xf-siropuChatContentHeight;
+
+	> *
+	{
+		display: none;
+	}
+	ul
+	{
+		list-style-type: none;
+	}
+	.username
+	{
+		font-weight: bold;
+	}
+	.fa-thumbs-up
+	{
+		color: @xf-siropuChatLikeIconColor;
+	}
+	.fa-thumbs-o-down
+	{
+		color: @xf-siropuChatUnlikeIconColor;
+	}
+	.a-quote-right
+	{
+		color: @xf-siropuChatQuoteIconColor;
+	}
+	.fa-link
+	{
+		color: @xf-siropuChatLinkIconColor;
+	}
+	.fa-flag
+	{
+		color: @xf-siropuChatReportIconColor;
+	}
+	.fa-pencil-square
+	{
+		color: @xf-siropuChatEditIconColor;
+	}
+	.fa-trash
+	{
+		color: @xf-siropuChatDeleteIconColor;
+	}
+	.fa-ban
+	{
+		color: @xf-siropuChatSanctionIconColor;
+	}
+}
+.siropuChatPage
+{
+	#siropuChatContent
+	{
+		height: @xf-siropuChatPageContentHeight;
+	}
+}
+.siropuChatMaximized
+{
+	#siropuChatContent
+	{
+		height: @xf-siropuChatMaximizedContentHeight;
+	}
+}
+.siropuChatMessages
+{
+	margin-right: 300px;
+
+	> li
+	{
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+		margin-bottom: 5px;
+
+		&:last-child
+		{
+			margin-bottom: 0;
+		}
+		> div
+		{
+			display: table-cell;
+			vertical-align: top;
+		}
+		&.siropuChatError
+		{
+			font-style: italic;
+		}
+	}
+	.bbWrapper
+	{
+		display: inline;
+	}
+}
+.siropuChatUsers
+{
+	width: 250px;
+	float: right;
+	border-left: 1px solid @xf-borderColor;
+
+	> li
+	{
+		margin-bottom: 5px;
+
+		&:last-child
+		{
+			margin-bottom: 0;
+		}
+	}
+}
+.siropuChatUserMenu
+{
+	form
+	{
+		display: none;
+		padding: 0 10px;
+
+		.button
+		{
+			padding-left: 0;
+    		padding-right: 0;
+			display: block;
+			width: 100%;
+		}
+	}
+}
+.siropuChatUserStatus
+{
+	.xf-siropuChatUserStatus();
+}
+.siropuChatMessages,
+.siropuChatUsers,
+#siropuChatRooms
+{
+	height: 100%;
+	overflow: auto;
+	padding: 10px;
+	margin: 0;
+}
+#siropuChatNoRoomsJoined
+{
+	margin: 0;
+	padding: 10px;
+}
+.siropuChatConversation.siropuChatUsers
+{
+	padding: 0 !important;
+
+	> li[data-conv-id]
+	{
+		.xf-siropuChatConversationListItem();
+
+		&:hover
+		{
+			.xf-siropuChatConversationListItemHover();
+			cursor: pointer;
+		}
+		&.siropuChatActiveConversation
+		{
+			.xf-siropuChatConversationListItemActive();
+		}
+	}
+}
+#siropuChatNoConversations
+{
+	padding: 10px;
+}
+#siropuChatStartConversation
+{
+	form
+	{
+		width: 50%;
+		border: 0;
+		float: right;
+		padding: 10px;
+	}
+}
+.siropuChatLeaveConversation
+{
+	float: right;
+	display: none;
+	color: @xf-textColorMuted;
+	font-size: 18px;
+
+	&:hover
+	{
+		color: crimson;
+		opacity: 1;
+	}
+}
+.siropuChatTag
+{
+	color: @xf-textColorDimmed;
+
+	&:hover
+	{
+		color: @xf-textColor;
+	}
+}
+.siropuChatMessageLikes
+{
+	font-weight: bold;
+	font-size: 12px;
+	color: green;
+}
+.siropuChatMessageEdited
+{
+	float: right;
+	font-size: 12px;
+	font-style: italic;
+	color: @xf-textColorMuted;
+
+	&span
+	{
+		cursor: help;
+	}
+}
+.siropuChatRecipients
+{
+	color: @xf-textColorMuted;
+	cursor: pointer;
+}
+.siropuChatDateTime
+{
+	.xf-siropuChatDateTime();
+}
+.siropuChatMention
+{
+	.xf-siropuChatUserMention();
+
+	.siropuChatDateTime
+	{
+		background: #fff;
+	}
+}
+.siropuChatTarget
+{
+	background-color: #f0e68c;
+}
+.siropuChatLoadMoreMessages
+{
+	text-align: center;
+
+	a
+	{
+		display: block;
+		font-weight: bold;
+		font-size: 12px;
+		
+		&[data-complete="true"]
+		{
+			color: crimson;
+		}
+	}
+}
+.siropuChatMessageText
+{
+	.lbContainer
+	{
+		display: block;
+		margin-top: 5px;
+	}
+	.bbMediaWrapper
+	{
+		margin-top: 5px;
+	}
+	img
+	{
+		max-height: 250px;
+	}
+}
+.siropuChatMessageContentRight, 
+{
+	text-align: right;
+	width: 150px;
+}
+.siropuChatMessageActions
+{
+	display: none;
+
+	a span
+	{
+		display: none;
+	}
+}
+.siropuChatNewMessage
+{
+	animation: blink 1s steps(5, start) infinite;
+	-webkit-animation: blink 1s steps(5, start) infinite;
+
+	&:hover
+	{
+		-webkit-animation-play-state: paused;
+		-moz-animation-play-state: paused;
+		-o-animation-play-state: paused;
+		animation-play-state: paused;
+	}
+}
+.siropuChatGuest
+{
+	color: @xf-textColorDimmed;
+}
+#siropuChatEditor
+{
+	dd
+	{
+		padding: 0;
+	}
+	.fr-toolbar
+	{
+		.xf-siropuChatEditorToolbar();
+	}
+	.fr-wrapper
+	{
+		.xf-siropuChatEditorInput();
+	}
+	.fr-element img
+	{
+		max-height: 100px;
+	}
+	.editorSmilies
+	{
+		border-color: @xf-borderColor;
+		border-left: 0;
+		border-right: 0;
+	}
+	form
+	{
+		position: relative;
+
+		button[type="submit"]
+		{
+			position: absolute;
+			bottom: 5px;
+			right: 5px;
+			z-index: 1;
+		}
+	}
+}
+.siropuChatEditorTop
+{
+	#siropuChatTabs
+	{
+		border-bottom: 0;
+	}
+	#siropuChatEditor
+	{
+		.fr-wrapper
+		{
+			border-width: 0 0 1px 0;
+		}
+	}
+	.siropuChatAds[data-position="belowEditor"]
+	{
+		border-top: 0;
+		border-bottom: 1px solid @xf-borderColor;
+	}
+}
+.siropuChatAds
+{
+	padding: 10px;
+	margin: 0;
+
+	&[data-position="aboveEditor"]
+	{
+		border-top: 1px solid @xf-borderColor;
+	}
+	&[data-position="belowEditor"]
+	{
+		border-top: 1px solid @xf-borderColor;
+	}
+}
+#siropuChatBar.block-container
+{
+	.siropuChatFixedPosition(0);
+	.xf-siropuChatBarContainer();
+	cursor: pointer;
+
+	> *
+	{
+		display: inline-block;
+	}
+	.username
+	{
+		font-weight: bold;
+	}
+}
+#siropuChatBarMessageContainer
+{
+	padding: 10px;
+
+	&:before
+	{
+		content: "\f0e6";
+		font-family: FontAwesome;
+		margin-right: 5px;
+	}
+}
+#siropuChatBarUserCount
+{
+	float: right;
+	border-left: 1px solid @xf-borderColor;
+	.siropuChatNoSelect();
+
+	a
+	{
+		display: block;
+		.xf-siropuChatBarButton();
+
+		span
+		{
+			color: @xf-textColorMuted;
+			font-weight: normal;
+
+			&:after
+			{
+				content: "]";
+			}
+			&:before
+			{
+				content: "[";
+			}
+		}
+	}
+}
+#siropuChatPopup
+{
+	cursor: pointer;
+}
+.siropuChatPage
+{
+	.siropuChatUsers
+	{
+		width: 300px;
+	}
+}
+.siropuChatHideUserList
+{
+	.siropuChatRoom.siropuChatUsers
+	{
+		display: none !important;
+	}
+}
+.siropuChatMessageRow.siropuChatBot ol li b
+{
+	cursor: pointer;
+}
+#siropuChatFullPage
+{
+	&::-webkit-scrollbar
+	{
+    	display: none;
+	}
+	.siropuChatUsers
+	{
+		width: 250px;
+	}
+}
+.menu--potentialFixed
+{
+	#siropuChatSettings
+	{
+		max-height: 400px;
+		overflow: auto;
+	}
+}
+.chatResponsive()
+{
+	#siropuChatTabs
+	{
+		display: block;
+		text-align: center;
+		padding: 5px 0;
+
+		 > span
+		{
+			float: none;
+			display: block;
+			border-top: 1px solid @xf-borderColor;
+			margin-top: 5px;
+		}
+	}
+	#siropuChatToggleUsers
+	{
+		display: initial;
+	}
+	.siropuChatMessages,
+	.siropuChatUsers,
+	#siropuChatStartConversation form
+	{
+		width: auto !important;
+		float: none;
+	}
+	.siropuChatMessages > li
+	{
+		display: block;
+		border-bottom: 1px solid #eee;
+		padding: 10px 0;
+
+		&:last-child
+		{
+			border-bottom: 0;
+		}
+	}
+	.siropuChatMessages > li > div
+	{
+		display: block;
+	}
+	.siropuChatMessageContentRight
+	{
+		width: auto;
+		text-align: center;
+	}
+	.siropuChatMessageActions a span
+	{
+		display: initial;
+	}
+	.siropuChatDateTime
+	{
+		font-size: 12px;
+	}
+}
+@media (max-width: @xf-responsiveNarrow)
+{
+	.chatResponsive();
+
+	#siropuChat.siropuChatAllPages
+	{
+		bottom: 35px;
+	}
+
+	#siropuChatBar.block-container
+	{
+		border-width: 0;
+
+		> *
+		{
+			display: block;
+		}
+	}
+	#siropuChatBarMessageContainer
+	{
+		padding: 5px;
+	}
+	#siropuChatBarUserCount
+	{
+		float: none;
+		text-align: center;
+		border-left: 0;
+		border-top: 1px solid @xf-borderColor;
+
+		> a
+		{
+			padding: 5px;
+		}
+	}
+}
+#siropuChat.siropuChatSidebar
+{
+	.chatResponsive();
+}
+@keyframes blink
+{
+	to
+	{
+		visibility: hidden;
+	}
+}
+@-webkit-keyframes blink
+{
+	to
+	{
+		visibility: hidden;
+	}
+}
+
+@-moz-document url-prefix()
+{ 
+	.siropuChatMessages > li:last-child
+	{
+		margin-bottom: 5px;
+	}
+}
+
+{{ include('siropu_chat_activity_status.less') }}
+{{ include('bb_code.less') }}]]></template>
+  <template type="public" title="siropu_chat_activity_status.less" version_id="200010" version_string="2.0.0"><![CDATA[.siropuChatActivityStatus
+{
+	&:after
+	{
+		content: "\25C9";
+	}
+	&[data-status="active"]
+	{
+		color: lightgreen;
+	}
+	&[data-status="idle"]
+	{
+		color: lightgray;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_ads_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_edit_ads') }}</xf:title>
+
+<xf:form action="{{ link('chat/edit-ads') }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<h2 class="block-tabHeader tabs" data-xf-init="tabs" role="tablist">
+				<a class="tabs-tab is-active" role="tab" tabindex="0" aria-controls="{{ unique_id('adsAboveEditor') }}">{{ phrase('siropu_chat_ads_above_editor') }}</a>
+				<a class="tabs-tab" role="tab" tabindex="0" aria-controls="{{ unique_id('adsBelowEditor') }}">{{ phrase('siropu_chat_ads_below_editor') }}</a>
+			</h2>
+
+			<ul class="tabPanes">
+				<li class="is-active" role="tabpanel" id="{{ unique_id('adsAboveEditor') }}">
+					<ul class="listPlain inputGroup-container">
+						<xf:foreach loop="$xf.options.siropuChatAdsAboveEditor" value="$value">
+							<li class="inputGroup block-row">
+								<xf:textarea name="ads_above_editor[]" value="{$value}" rows="3" placeholder="{{ phrase('siropu_chat_paste_ad_code') }}" />
+							</li>
+						</xf:foreach>
+						<li class="inputGroup block-row" data-xf-init="field-adder" data-increment-format="ads_above_editor[]">
+							<xf:textarea name="ads_above_editor[]" rows="3" placeholder="{{ phrase('siropu_chat_paste_ad_code') }}" />
+						</li>
+					</ul>
+				</li>
+				<li class="is-active" role="tabpanel" id="{{ unique_id('adsBelowEditor') }}">
+					<ul class="listPlain inputGroup-container">
+						<xf:foreach loop="$xf.options.siropuChatAdsBelowEditor" value="$value">
+							<li class="inputGroup block-row">
+								<xf:textarea name="ads_below_editor[]" value="{$value}" rows="3" placeholder="{{ phrase('siropu_chat_paste_ad_code') }}" />
+							</li>
+						</xf:foreach>
+						<li class="inputGroup block-row" data-xf-init="field-adder" data-increment-format="ads_below_editor[]">
+							<xf:textarea name="ads_below_editor[]" rows="3" placeholder="{{ phrase('siropu_chat_paste_ad_code') }}" />
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<xf:submitrow icon="save">
+		<xf:html>
+			<xf:checkbox name="remove_all" standalone="true">
+				<xf:option value="1" label="{{ phrase('siropu_chat_remove_ads') }}" />
+			</xf:checkbox>
+		</xf:html>
+	</xf:submitrow>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_ads_macros" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<xf:macro name="ads" arg-position="!" arg-ads="!">
+	<xf:if is="$ads is not empty">
+		<div class="siropuChatAds" data-position="{$position}">
+			{$ads|raw}
+			<xf:if is="$xf.visitor.canEditSiropuChatAds()"> <a href="{{ link('chat/edit-ads') }}" data-xf-click="overlay" data-cache="false" style="font-size: 10px;">{{ phrase('edit') }}</a></xf:if>
+		</div>
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_archive" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:title>{{ phrase('siropu_chat_archive') }}</xf:title>
+
+<xf:css src="siropu_chat.less" />
+<xf:css src="siropu_chat_archive.less" />
+
+<xf:js src="siropu/chat/core.js" min="1">
+	$(function()
+	{
+		var target = $('.siropuChatMessageRow:target');
+		var sticky = $('.p-navSticky');
+
+		if (target.length)
+		{
+			if (sticky.length)
+			{
+				$(document).scrollTop(target.offset().top - sticky.height());
+			}
+
+			if (!target.hasClass('siropuChatMention'))
+			{
+				target.addClass('siropuChatMention siropuChatTarget');
+			}
+		}
+	});
+</xf:js>
+
+<div id="siropuChatArchive" class="block">
+    <div class="block-container">
+		<xf:if is="$xf.visitor.canSearchSiropuChatArchive()">
+			<div class="block-filterBar">
+				<div class="filterBar">
+						<xf:form action="{{ link('chat/archive') }}">
+							<div class="inputGroup inputGroup--auto">
+								<xf:if is="$rooms is not empty">
+									<xf:select name="room_id" value="{$params.room_id}" class="input--autoSize">
+										<xf:option>{{ phrase('siropu_chat_any_room') }}</xf:option>
+										<xf:foreach loop="$rooms" value="$room">
+											<xf:option value="{$room.room_id}">{$room.room_name}</xf:option>
+										</xf:foreach>
+									</xf:select>
+									<span class="inputGroup-splitter"></span>
+								</xf:if>
+								<xf:textbox name="keywords" value="{$params.keywords}" placeholder="{{ phrase('siropu_chat_has_keywords') }}" />
+								<span class="inputGroup-splitter"></span>
+								<xf:textbox name="users" value="{$params.users}" placeholder="{{ phrase('siropu_chat_posted_by') }}" data-xf-init="auto-complete" />
+								<span class="inputGroup-splitter"></span>
+								<xf:dateinput name="since_date" value="{{ $params.since_date ? date($params.since_date, 'Y-m-d') : '' }}" placeholder="{{ phrase('siropu_chat_since_date') }}" />
+								<span class="inputGroup-splitter"></span>
+								<xf:dateinput name="until_date" value="{{ $params.until_date ? date($params.until_date, 'Y-m-d') : '' }}" placeholder="{{ phrase('siropu_chat_until_date') }}" />
+								<span class="inputGroup-splitter"></span>
+								<xf:select name="date_preset">
+									<xf:option label="{{ phrase('date_presets:') }}" />
+									<xf:optgroup>
+										<xf:options source="{$datePresets}" />
+										<xf:option value="1995-01-01">{{ phrase('all_time') }}</xf:option>
+									</xf:optgroup>
+								</xf:select>
+								<span class="inputGroup-splitter"></span>
+								<xf:button type="submit"><i class="fa fa-search" aria-hidden="true"></i></xf:button>
+							</div>
+						</xf:form>
+					</div>
+				</div>
+		</xf:if>
+        <div class="block-body">
+           <xf:if is="$messages is not empty">
+			   <ul class="siropuChatRoom siropuChatMessages" data-xf-init="siropu-chat-messages">
+					<xf:foreach loop="$messages" value="$message">
+					   	<xf:include template="siropu_chat_room_message_row" />
+				   	</xf:foreach>
+			   </ul>
+			   <div class="block-footer block-footer--split">
+				  <span class="block-footer-counter">{{ display_totals($messages, $total) }}</span>
+				  <span class="block-footer-controls">
+					   <xf:form action="{{ link('chat/archive') }}">
+						   <div class="inputGroup inputGroup--auto">
+							   <xf:select name="set_order" value="{$order}">
+								   <xf:option value="newest">{{ phrase('siropu_chat_newest_messages_first') }}</xf:option>
+								   <xf:option value="oldest">{{ phrase('siropu_chat_oldest_messages_first') }}</xf:option>
+								   <xf:option value="likes">{{ phrase('siropu_chat_most_likes_first') }}</xf:option>
+							   </xf:select>
+							   <span class="inputGroup-splitter"></span>
+							   <xf:button type="submit" icon="save" />
+						   </div>
+					  </xf:form>
+				   </span>
+			   </div>
+			 <xf:else />
+			   <div class="block-row">
+				   <xf:if is="$rooms is empty AND $xf.visitor.canSearchSiropuChatArchive()">
+				   		 {{ phrase('siropu_chat_no_rooms_joined') }}
+				  	<xf:else />
+					    {{ phrase('siropu_chat_no_messages_found') }}
+				   </xf:if>
+			   </div>
+			</xf:if>
+        </div>
+    </div>
+	 <xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="chat/archive" params="{$params}" wrapperclass="block-outer block-outer--after" />
+</div>]]></template>
+  <template type="public" title="siropu_chat_archive.less" version_id="2000170" version_string="2.0.1"><![CDATA[#siropuChatArchive
+{
+	.username
+	{
+		font-weight: bold;
+	}
+	.bbWrapper
+	{
+		display: inline;
+	}
+	.fa
+	{
+		font-size: @xf-siropuChatIconFontSize;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_attachments.less" version_id="200010" version_string="2.0.0"><![CDATA[.siropuChatUploads
+{
+	.attachUploadList
+	{
+		background: none;
+		border: 0;
+		margin: 0;
+		border-radius: 0;
+		max-height: 400px;
+		overflow: auto;
+
+		li
+		{
+			display: inline-block;
+			cursor: pointer;
+			border: 0;
+			padding: 0;
+
+			img
+			{
+				&:hover
+				{
+					opacity: 0.5;
+				}
+			}
+
+			&.js-attachmentFileSelected
+			{
+				span
+				{
+					position: relative;
+
+					&:after
+					{
+						position: absolute;
+						bottom: 5px;
+						right: 5px;
+						font-family: FontAwesome;
+						content: "\f058";
+						font-size: 25px;
+					}
+				}
+				img
+				{
+					opacity: 0.5;
+				}
+			}
+		}
+	}
+
+	.formSubmitRow-controls
+	{
+		display: none;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_badge.less" version_id="200010" version_string="2.0.0"><![CDATA[a[data-nav-id="siropuChat"]
+{
+	.badge--highlighted
+	{
+		background: @xf-siropuChatNoUserCountBadgeColor;
+		color: @xf-siropuChatNoUserCountColor;
+	}
+	.badge--active
+	{
+		background: @xf-siropuChatActiveUserCountBadgeColor;
+		color: @xf-siropuChatActiveUserCountColor;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_bot_message_delete" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/bot-messages/delete', $message) }}" class="block" ajax="true">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('please_confirm_that_you_want_to_delete_following:') }}
+				<strong><a href="{{ link('chat/bot-messages/edit', $message) }}">{$message.message_title}</a></strong>
+			</xf:inforow>
+		</div>
+
+		<xf:submitrow rowtype="simple" icon="delete" />
+	</div>
+
+	<xf:redirect />
+
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_bot_message_delete" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/bot-messages/delete', $message) }}" class="block" ajax="true">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('please_confirm_that_you_want_to_delete_following:') }}
+				<strong><a href="{{ link('chat/bot-messages/edit', $message) }}">{$message.message_title}</a></strong>
+			</xf:inforow>
+		</div>
+
+		<xf:submitrow rowtype="simple" icon="delete" />
+	</div>
+
+	<xf:redirect />
+
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_bot_message_edit" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:if is="$message.isInsert()">
+	<xf:title>{{ phrase('siropu_chat_add_bot_message') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('siropu_chat_edit_bot_message:') }} {$message.message_title}</xf:title>
+</xf:if>
+
+<xf:pageaction if="$message.isUpdate()">
+	<xf:button href="{{ link('chat/bot-messages/delete', $message) }}" icon="delete" overlay="true" />
+</xf:pageaction>
+
+<xf:form action="{{ link('chat/bot-messages/save', $message) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow>{{ phrase('siropu_ads_manager_bot_message_info_block', {'url': link('options/groups/basicBoard/#guestTimeZone') }) }}</xf:inforow>
+
+			<xf:textboxrow name="message_title" value="{$message.message_title}" maxlength="{{ max_length($message, 'message_title') }}"
+				label="{{ phrase('title') }}" />
+	
+			<xf:textarearow name="message_text" value="{$message.message_text}" rows="3" maxlength="{{ max_length($message, 'message_title') }}"
+				label="{{ phrase('message') }}" />
+
+			<xf:textboxrow name="message_bot_name" value="{$message.message_bot_name}" maxlength="{{ max_length($message, 'message_bot_name') }}"
+				label="{{ phrase('siropu_chat_bot_name') }}"
+				explain="{{ phrase('siropu_chat_bot_name_explain') }}" />
+
+			<xf:selectrow name="message_rooms" value="{$message.message_rooms}" multiple="true" label="{{ phrase('siropu_chat_enable_for_selected_rooms') }}" explain="{{ phrase('siropu_chat_enable_for_selected_rooms_explain') }}">
+				<xf:foreach loop="$rooms" value="$room">
+					<xf:option value="{$room.room_id}">{$room.room_name}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<hr class="formRowSep" />
+
+			<xf:radiorow name="message_rules[day_type]" value="{{ $message.message_rules.day_type ?: 'dow' }}"
+				label="{{ phrase('siropu_chat_post_at') }}">
+
+				<xf:option value="date" label="{{ phrase('date:') }}">
+					<xf:dateinput name="message_rules[date]" value="{$message.message_rules.date}" />
+				</xf:option>
+				<xf:option value="dow" label="{{ phrase('day_of_week:') }}">
+					<xf:select name="message_rules[dow]" value="{$message.message_rules.dow|raw}" multiple="true" size="8" style="width: 200px">
+						<xf:option value="-1">{{ phrase('any') }}</xf:option>
+						<xf:option value="0">{{ phrase('day_sunday') }}</xf:option>
+						<xf:option value="1">{{ phrase('day_monday') }}</xf:option>
+						<xf:option value="2">{{ phrase('day_tuesday') }}</xf:option>
+						<xf:option value="3">{{ phrase('day_wednesday') }}</xf:option>
+						<xf:option value="4">{{ phrase('day_thursday') }}</xf:option>
+						<xf:option value="5">{{ phrase('day_friday') }}</xf:option>
+						<xf:option value="6">{{ phrase('day_saturday') }}</xf:option>
+					</xf:select>
+				</xf:option>
+			</xf:radiorow>
+
+			<xf:selectrow name="message_rules[hours]" value="{$message.message_rules.hours|raw}" multiple="true" size="8" style="width: 200px"
+				label="{{ phrase('siropu_chat_hour') }}">
+				<xf:option value="-1">{{ phrase('any') }}</xf:option>
+				<xf:option value="0">0 {{ phrase('(midnight)') }}</xf:option>
+				<xf:option value="1">1</xf:option>
+				<xf:option value="2">2</xf:option>
+				<xf:option value="3">3</xf:option>
+				<xf:option value="4">4</xf:option>
+				<xf:option value="5">5</xf:option>
+				<xf:option value="6">6</xf:option>
+				<xf:option value="7">7</xf:option>
+				<xf:option value="8">8</xf:option>
+				<xf:option value="9">9</xf:option>
+				<xf:option value="10">10</xf:option>
+				<xf:option value="11">11</xf:option>
+				<xf:option value="12">12 {{ phrase('(noon)') }}</xf:option>
+				<xf:option value="13">13</xf:option>
+				<xf:option value="14">14</xf:option>
+				<xf:option value="15">15</xf:option>
+				<xf:option value="16">16</xf:option>
+				<xf:option value="17">17</xf:option>
+				<xf:option value="18">18</xf:option>
+				<xf:option value="19">19</xf:option>
+				<xf:option value="20">20</xf:option>
+				<xf:option value="21">21</xf:option>
+				<xf:option value="22">22</xf:option>
+				<xf:option value="23">23</xf:option>
+			</xf:selectrow>
+
+			<xf:selectrow name="message_rules[minutes]" value="{$message.message_rules.minutes|raw}" multiple="true" size="8" style="width: 200px"
+				label="{{ phrase('siropu_chat_minute') }}">
+				<xf:option value="0">0</xf:option>
+				<xf:option value="1">1</xf:option>
+				<xf:option value="2">2</xf:option>
+				<xf:option value="3">3</xf:option>
+				<xf:option value="4">4</xf:option>
+				<xf:option value="5">5</xf:option>
+				<xf:option value="6">6</xf:option>
+				<xf:option value="7">7</xf:option>
+				<xf:option value="8">8</xf:option>
+				<xf:option value="9">9</xf:option>
+				<xf:option value="10">10</xf:option>
+				<xf:option value="11">11</xf:option>
+				<xf:option value="12">12</xf:option>
+				<xf:option value="13">13</xf:option>
+				<xf:option value="14">14</xf:option>
+				<xf:option value="15">15</xf:option>
+				<xf:option value="16">16</xf:option>
+				<xf:option value="17">17</xf:option>
+				<xf:option value="18">18</xf:option>
+				<xf:option value="19">19</xf:option>
+				<xf:option value="20">20</xf:option>
+				<xf:option value="21">21</xf:option>
+				<xf:option value="22">22</xf:option>
+				<xf:option value="23">23</xf:option>
+				<xf:option value="24">24</xf:option>
+				<xf:option value="25">25</xf:option>
+				<xf:option value="26">26</xf:option>
+				<xf:option value="27">27</xf:option>
+				<xf:option value="28">28</xf:option>
+				<xf:option value="29">29</xf:option>
+				<xf:option value="30">30</xf:option>
+				<xf:option value="31">31</xf:option>
+				<xf:option value="32">32</xf:option>
+				<xf:option value="33">33</xf:option>
+				<xf:option value="34">34</xf:option>
+				<xf:option value="35">35</xf:option>
+				<xf:option value="36">36</xf:option>
+				<xf:option value="37">37</xf:option>
+				<xf:option value="38">38</xf:option>
+				<xf:option value="39">39</xf:option>
+				<xf:option value="40">40</xf:option>
+				<xf:option value="41">41</xf:option>
+				<xf:option value="42">42</xf:option>
+				<xf:option value="43">43</xf:option>
+				<xf:option value="44">44</xf:option>
+				<xf:option value="45">45</xf:option>
+				<xf:option value="46">46</xf:option>
+				<xf:option value="47">47</xf:option>
+				<xf:option value="48">48</xf:option>
+				<xf:option value="49">49</xf:option>
+				<xf:option value="50">50</xf:option>
+				<xf:option value="51">51</xf:option>
+				<xf:option value="52">52</xf:option>
+				<xf:option value="53">53</xf:option>
+				<xf:option value="54">54</xf:option>
+				<xf:option value="55">55</xf:option>
+				<xf:option value="56">56</xf:option>
+				<xf:option value="57">57</xf:option>
+				<xf:option value="58">58</xf:option>
+				<xf:option value="59">59</xf:option>
+			</xf:selectrow>
+		</div>
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_bot_message_list" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:title>{{ phrase('siropu_chat_bot_messages') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('chat/bot-messages/add') }}" icon="add">{{ phrase('siropu_chat_add_bot_message') }}</xf:button>
+</xf:pageaction>
+
+<xf:if is="$messages is not empty">
+	<xf:form action="{{ link('chat/bot-messages/toggle') }}" class="block" ajax="true">
+		<div class="block-outer">
+			<xf:macro template="filter_macros" name="quick_filter" arg-key="chat/bot-messages" arg-class="block-outer-opposite" />
+		</div>
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('title') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_post_at') }}</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="$messages" value="$message">
+						<xf:datarow delete="{{ link('chat/bot-messages/delete', $message) }}">
+							<xf:cell href="{{ link('chat/bot-messages/edit', $message) }}">
+								{$message.message_title}
+							</xf:cell>
+							<xf:cell>
+								{$message.next_run}
+							</xf:cell>
+							<xf:toggle name="message_enabled[{$message.message_id}]"
+								selected="$message.message_enabled" class="dataList-cell--separated" submit="true"
+								tooltip="{{ phrase('siropu_chat_enable_disable_bot_message') }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($messages) }}</span>
+			</div>
+		</div>
+	</xf:form>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="siropu_chat_bot_response_delete" version_id="2000032" version_string="2.0.0 Beta 2"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/bot-responses/delete', $response) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('please_confirm_that_you_want_to_delete_following:') }}
+				<strong><a href="{{ link('chat/bot-responses/edit', $response) }}">{$response.response_keyword}</a></strong>
+			</xf:inforow>
+		</div>
+		<xf:submitrow rowtype="simple" icon="delete" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_bot_response_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:if is="$response.isInsert()">
+	<xf:title>{{ phrase('siropu_chat_add_bot_response') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('siropu_chat_edit_bot_response:') }} {$message.message_title}</xf:title>
+</xf:if>
+
+<xf:pageaction if="$response.isUpdate()">
+	<xf:button href="{{ link('chat/bot-messages/delete', $response) }}" icon="delete" overlay="true" />
+</xf:pageaction>
+
+<xf:form action="{{ link('chat/bot-responses/save', $response) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textarearow name="response_keyword" value="{$response.response_keyword}" maxlength="{{ max_length($response, 'response_keyword') }}"
+				label="{{ phrase('siropu_chat_keyword') }}"
+				explain="{{ phrase('siropu_chat_bot_response_keyword_explain') }}"
+				rows="3" />
+
+			<xf:textarearow name="response_message" value="{$response.response_message}" maxlength="{{ max_length($response, 'response_message') }}"
+				label="{{ phrase('siropu_chat_response') }}"
+				explain="{{ phrase('siropu_chat_bot_response_explain') }}"
+				rows="3" />
+
+			<xf:textboxrow name="response_bot_name" value="{$response.response_bot_name}" maxlength="{{ max_length($response, 'response_bot_name') }}"
+				label="{{ phrase('siropu_chat_bot_name') }}"
+				explain="{{ phrase('siropu_chat_bot_name_explain') }}" />
+
+			<hr class="formRowSep" />
+
+			<xf:selectrow name="response_rooms" value="{$response.response_rooms}" multiple="true" label="{{ phrase('siropu_chat_enable_for_selected_rooms') }}" explain="{{ phrase('siropu_chat_option_not_required') }}">
+				<xf:foreach loop="$rooms" value="$room">
+					<xf:option value="{$room.room_id}">{$room.room_name}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<xf:selectrow name="response_user_groups" value="{$response.response_user_groups}" multiple="true" label="{{ phrase('siropu_chat_enable_for_selected_user_groups') }}" explain="{{ phrase('siropu_chat_option_not_required') }}">
+				<xf:foreach loop="$userGroups" key="$userGroupId" value="$userGroupTitle">
+					<xf:option value="{$userGroupId}">{$userGroupTitle}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<hr class="formRowSep" />
+			
+			<xf:numberboxrow name="response_settings[interval]" value="{$response.response_settings.interval}" min="0" step="1" label="{{ phrase('siropu_chat_bot_response_interval') }}" explain="{{ phrase('siropu_chat_bot_response_interval_explain') }}" />
+
+			<xf:checkboxrow>
+				<xf:option name="response_settings[exact_match]" value="1" selected="$response.response_settings.exact_match">{{ phrase('siropu_chat_bot_response_exact_match') }}</xf:option>
+				<xf:option name="response_settings[mention]" value="1" selected="$response.response_settings.mention">{{ phrase('siropu_chat_bot_response_mention_user') }}</xf:option>
+			</xf:checkboxrow>
+		</div>
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_bot_response_list" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_bot_responses') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('chat/bot-responses/add') }}" icon="add">{{ phrase('siropu_chat_add_bot_response') }}</xf:button>
+</xf:pageaction>
+
+<xf:if is="$responses is not empty">
+	<xf:form action="{{ link('chat/bot-responses/toggle') }}" class="block" ajax="true">
+		<div class="block-outer">
+			<xf:macro template="filter_macros" name="quick_filter" arg-key="chat/bot-responses" arg-class="block-outer-opposite" />
+		</div>
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('siropu_chat_keyword') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_bot_name') }}</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="$responses" value="$response">
+						<xf:datarow delete="{{ link('chat/bot-responses/delete', $response) }}">
+							<xf:cell href="{{ link('chat/bot-responses/edit', $response) }}">
+								{$response.response_keyword}
+							</xf:cell>
+							<xf:cell>
+								{$response.response_bot_name|raw}
+							</xf:cell>
+							<xf:toggle name="response_enabled[{$response.response_id}]"
+								selected="$response.response_enabled" class="dataList-cell--separated" submit="true"
+								tooltip="{{ phrase('siropu_chat_enable_disable_bot_response') }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($responses) }}</span>
+			</div>
+		</div>
+	</xf:form>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
+</xf:if>]]></template>
+  <template type="public" title="siropu_chat_closed" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:css src="siropu_chat_disabled.less" />
+
+<div id="siropuChat" class="block-container {$cssClass}">
+	<div class="block-header">
+		<i class="fa fa-comments-o" aria-hidden="true"></i> {{ phrase('siropu_chat_header_title') }}
+	</div>
+	<div class="block-body block-row">
+		{$message}
+	</div>
+</div>]]></template>
+  <template type="admin" title="siropu_chat_command_delete" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/commands/delete', $command) }}" class="block" ajax="true">
+
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('please_confirm_that_you_want_to_delete_following:') }}
+				<strong><a href="{{ link('chat/commands/edit', $command) }}">{$command.command_name}</a></strong>
+			</xf:inforow>
+		</div>
+
+		<xf:submitrow rowtype="simple" icon="delete" />
+	</div>
+
+	<xf:redirect />
+
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_command_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:if is="$command.isInsert()">
+	<xf:title>{{ phrase('siropu_chat_add_command') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('siropu_chat_edit_command:') }} {$command.command_name}</xf:title>
+</xf:if>
+
+<xf:pageaction if="$command.isUpdate()">
+	<xf:button href="{{ link('chat/commands/delete', $command) }}" icon="delete" overlay="true" />
+</xf:pageaction>
+
+<xf:form action="{{ link('chat/commands/save', $command) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow name="command_name" value="{$command.command_name}" maxlength="{{ max_length($command, 'command_name') }}"
+				label="{{ phrase('siropu_chat_command_name') }}"
+				explain="{{ phrase('siropu_chat_command_name_explain') }}" />
+
+			<xf:codeeditorrow name="command_description" value="{$command.command_description}"
+				mode="html" data-line-wrapping="true"
+				class="codeEditor--autoSize codeEditor--proportional"
+				label="{{ phrase('siropu_chat_command_description') }}"
+				explain="{{ phrase('siropu_chat_command_description_explain') }}" />
+
+			<xf:formrow rowtype="input"
+				label="{{ phrase('execute_callback') }}">
+				<xf:macro template="helper_callback_fields" name="callback_fields" arg-data="{$command}" arg-namePrefix="command_callback" />
+			</xf:formrow>
+
+			<xf:selectrow name="command_rooms" value="{$command.command_rooms}" multiple="true" label="{{ phrase('siropu_chat_enable_for_selected_rooms') }}" explain="{{ phrase('siropu_chat_option_not_required') }}">
+				<xf:foreach loop="$rooms" value="$room">
+					<xf:option value="{$room.room_id}">{$room.room_name}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<xf:selectrow name="command_user_groups" value="{$command.command_user_groups}" multiple="true" label="{{ phrase('siropu_chat_enable_for_selected_user_groups') }}" explain="{{ phrase('siropu_chat_option_not_required') }}">
+				<xf:foreach loop="$userGroups" key="$userGroupId" value="$userGroupTitle">
+					<xf:option value="{$userGroupId}">{$userGroupTitle}</xf:option>
+				</xf:foreach>
+			</xf:selectrow>
+
+			<xf:textboxrow name="command_options_template" value="{$command.command_options_template}" maxlength="{{ max_length($command, 'command_options_template') }}"
+				label="{{ phrase('siropu_chat_command_options_template') }}"
+				explain="{{ phrase('siropu_chat_command_options_template_explain') }}"
+				data-xf-init="siropu-chat-command-options-template" />
+
+			<xf:if is="$command.command_options_template">
+				<hr class="formRowSep" />
+				
+				<xf:include template="{$command.command_options_template}" />
+
+				<hr class="formRowSep" />
+			</xf:if>
+
+			<xf:checkboxrow>
+				<xf:option name="command_enabled" value="1" selected="$command.command_enabled">{{ phrase('siropu_chat_command_is_enabled') }}</xf:option>
+			</xf:checkboxrow>
+		</div>
+		<xf:submitrow sticky="true" icon="save" />
+	</div>
+</xf:form>]]></template>
+  <template type="admin" title="siropu_chat_command_list" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_commands') }}</xf:title>
+
+<xf:pageaction>
+	<xf:button href="{{ link('chat/commands/add') }}" icon="add">{{ phrase('siropu_chat_add_command') }}</xf:button>
+</xf:pageaction>
+
+<xf:if is="$commands is not empty">
+	<xf:form action="{{ link('chat/commands/toggle') }}" class="block" ajax="true">
+		<div class="block-outer">
+			<xf:macro template="filter_macros" name="quick_filter" arg-key="chat/commands" arg-class="block-outer-opposite" />
+		</div>
+		<div class="block-container">
+			<div class="block-body">
+				<xf:datalist>
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('siropu_chat_command_name') }}</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="$commands" value="$command">
+						<xf:datarow delete="{{ link('chat/commands/delete', $command) }}">
+							<xf:cell href="{{ link('chat/commands/edit', $command) }}">
+								{$command.command_name}
+							</xf:cell>
+							<xf:toggle name="command_enabled[{$command.command_name}]"
+								selected="$command.command_enabled" class="dataList-cell--separated" submit="true"
+								tooltip="{{ phrase('siropu_chat_enable_disable_command') }}" />
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+			</div>
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ display_totals($commands) }}</span>
+			</div>
+		</div>
+	</xf:form>
+<xf:else />
+	<div class="blockMessage">{{ phrase('no_items_have_been_created_yet') }}</div>
+</xf:if>]]></template>
+  <template type="admin" title="siropu_chat_command_options_roll" version_id="200010" version_string="2.0.0"><![CDATA[<xf:numberboxrow name="command_options[default_dice_count]" value="{{ $command.command_options.default_dice_count ?: 1 }}" min="1"
+	label="{{ phrase('siropu_chat_roll_command_default_dice_count') }}"
+	explain="{{ phrase('siropu_chat_roll_command_default_dice_count_explain') }}" />
+
+<xf:numberboxrow name="command_options[default_dice_sides]" value="{{ $command.command_options.default_dice_sides ?: 6 }}" min="2"
+	label="{{ phrase('siropu_chat_roll_command_default_dice_sides') }}"
+	explain="{{ phrase('siropu_chat_roll_command_default_dice_sides_explain') }}" />
+
+<xf:numberboxrow name="command_options[max_dice_count]" value="{{ $command.command_options.max_dice_count ?: 1 }}" min="1"
+	label="{{ phrase('siropu_chat_roll_command_max_dice_count') }}"
+	explain="{{ phrase('siropu_chat_roll_command_max_dice_count_explain') }}" />
+
+<xf:numberboxrow name="command_options[max_dice_sides]" value="{{ $command.command_options.max_dice_sides ?: 6 }}" min="2"
+	label="{{ phrase('siropu_chat_roll_command_max_dice_sides') }}"
+	explain="{{ phrase('siropu_chat_roll_command_max_dice_sides_explain') }}" />]]></template>
+  <template type="public" title="siropu_chat_conversation_leave_confirm" version_id="200010" version_string="2.0.0 Beta 1"><![CDATA[<xf:title>{{ phrase('siropu_chat_leave_conversation') }} (<xf:username user="$conversation.Contact" defaultname="{{ phrase('unknown') }}" href="" rich="true" />)</xf:title>
+
+<xf:form action="{{ link('chat/conversation/leave', $conversation) }}" class="block" data-xf-init="siropu-chat-leave-conversation" ajax="true">
+	<div class="block-container">
+		<xf:inforow rowtype="confirm">
+			{{ phrase('siropu_chat_leave_conversation_explain', {'user': $conversation.Contact.username}) }}
+		</xf:inforow>
+		<xf:submitrow submit="{{ phrase('siropu_chat_leave_conversation') }}" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_conversation_message_delete" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<xf:title>{{ phrase('siropu_chat_delete_message') }}</xf:title>
+
+<xf:js src="siropu/chat/message.min.js" />
+
+<xf:form action="{{ link('chat/conversation/delete', $message) }}" class="block" data-xf-init="siropu-chat-message-delete" ajax="true">
+	<div class="block-container">
+		<div class="block-body block-row">
+			{{ bb_code($message.message_text, 'siropu_chat_conv_message', $message.User) }}
+		</div>
+		<xf:submitrow icon="delete" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_conversation_message_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_edit_message') }}</xf:title>
+
+<xf:js src="siropu/chat/message.js" min="1" />
+
+<xf:form action="{{ link('chat/conversation/edit', $message) }}" class="block" data-edit="true" data-xf-init="siropu-chat-message-save siropu-chat-form" data-multi-line="{{ $xf.options.siropuChatMultiLineMessages ? 'true' : 'false' }}" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:editorrow name="message" value="{$message.message_text}" rowtype="fullWidth noLabel" rows="1" removebuttons="{$disabledButtons}" data-min-height="40" />
+		</div>
+		<xf:submitrow icon="save" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_conversation_message_row" version_id="200010" version_string="2.0.0"><![CDATA[<li id="cm-{$message.message_id}" class="{$message.css_class}" data-id="{$message.message_id}">
+	<div class="siropuChatMessageContentLeft">
+		<xf:if is="$xf.options.siropuChatAvatarInMessageList">
+			<xf:avatar user="$message.User" size="xxs" defaultname="{$message.message_username}" itemprop="image" />
+		</xf:if>
+		<xf:if is="$message.isBot()">
+			{$xf.options.siropuChatBotName|raw}:
+		<xf:else />
+			<xf:username user="$message.User" defaultname="{$message.message_username}" rich="true" />:
+		</xf:if>
+		<span class="siropuChatMessageText"><xf:if is="$message.isError()">{{ phrase('siropu_chat_error') }} </xf:if>{{ bb_code($message.message|censor, 'siropu_chat_conv_message', $message.User) }}</span>
+		<xf:if is="$message.isLiked()">
+			<a role="button" class="siropuChatMessageLikes">+1</a>
+		</xf:if>
+	</div>
+	<div class="siropuChatMessageContentRight">
+		<xf:if contentcheck="true">
+			<span class="siropuChatMessageActions">
+				<xf:contentcheck>
+					<xf:if is="$message.canLike()">
+						<xf:if is="$message.isLiked()">
+								<a href="{{ link('chat/conversation/unlike', $message) }}" title="{{ phrase('unlike') }}" data-xf-click="siropu-chat-unlike"><i class="fa fa-thumbs-o-down" aria-hidden="true"></i> <span>{{ phrase('unlike') }}</span></a>
+							<xf:else />
+								<a href="{{ link('chat/conversation/like', $message) }}" title="{{ phrase('like') }}" data-xf-click="siropu-chat-like"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <span>{{ phrase('like') }}</span></a>
+						</xf:if>
+					</xf:if>
+					<xf:if is="$message.canQuote()">
+						<a href="{{ link('chat/conversation/quote', $message) }}" title="{{ phrase('quote') }}" data-xf-click="siropu-chat-quote"><i class="fa fa-quote-right" aria-hidden="true"></i> <span>{{ phrase('quote') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canReport()">
+						<a href="{{ link('chat/conversation/report', $message) }}" title="{{ phrase('report') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-flag" aria-hidden="true"></i> <span>{{ phrase('report') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canEditDelete()">
+						<a href="{{ link('chat/conversation/edit', $message) }}" title="{{ phrase('edit') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-pencil-square" aria-hidden="true"></i> <span>{{ phrase('edit') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canEditDelete()">
+						<a href="{{ link('chat/conversation/delete', $message) }}" title="{{ phrase('delete') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-trash" aria-hidden="true"></i> <span>{{ phrase('delete') }}</span></a>
+					</xf:if>
+				</xf:contentcheck>
+			</span>
+		</xf:if>
+		<xf:date time="{$message.message_date}" class="siropuChatDateTime" />
+	</div>
+</li>]]></template>
+  <template type="public" title="siropu_chat_conversation_start" version_id="200010" version_string="2.0.0"><![CDATA[<xf:macro name="form" arg-recipient="{{ false }}">
+	<xf:form action="{{ link('chat/conversation/start', $recipient) }}" data-xf-init="siropu-chat-start-conversation-form">
+		<xf:if is="!$recipient">
+			<p><input type="text" name="recipient" class="input" placeholder="{{ phrase('recipient') }}" data-xf-init="auto-complete" data-single="true"></p>
+		</xf:if>
+		<p><textarea name="message" class="input" placeholder="{{ phrase('message') }}" rows="5"></textarea></p>
+		<p><button type="submit" class="button button--primary"><i class="fa fa-user-plus" aria-hidden="true"></i> {{ phrase('siropu_chat_start_private_conversation') }}</button></p>
+	</xf:form>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_conversation_view.less" version_id="200010" version_string="2.0.0"><![CDATA[.p-title
+{
+	display: none;
+}]]></template>
+  <template type="public" title="siropu_chat_disabled" version_id="200010" version_string="2.0.0"><![CDATA[<xf:css src="siropu_chat_disabled.less" />
+<xf:js src="siropu/chat/disabled.min.js" />
+
+<xf:button id="siropuChat" class="{$cssClass} siropuChatEnable button--link" data-xf-click="siropu-chat-enable"><i class="fa fa-comments-o" aria-hidden="true"></i> {{ phrase('siropu_chat_enable') }}</xf:button>]]></template>
+  <template type="public" title="siropu_chat_disabled.less" version_id="200010" version_string="2.0.0"><![CDATA[#siropuChat
+{
+	&.siropuChatEnable
+	{
+		font-weight: bold;
+		width: 100%;
+	}
+	&.siropuChatAboveForumList,
+	&.siropuChatAboveContent,
+	&.siropuChatSidebarTop
+	{
+		margin-bottom: 20px;
+	}
+	&.siropuChatAllPages,
+	&.siropuChatBelowForumList,
+	&.siropuChatBelowContent,
+	&.siropuChatSidebarBottom
+	{
+		margin-top: 20px;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_editor" version_id="2000051" version_string="2.0.0 RC 1"><![CDATA[<div id="siropuChatEditor">
+	<xf:macro template="siropu_chat_ads_macros" name="ads" arg-position="aboveEditor" arg-ads="{$chat.ads.aboveEditor}" />
+	<form data-xf-init="siropu-chat-form" data-multi-line="{{ $xf.options.siropuChatMultiLineMessages ? 'true' : 'false' }}">
+		<xf:editorrow name="message" placeholder="{{ $chat.channel == 'room' ? (($xf.visitor.user_id == 0 AND $xf.options.siropuChatGuestRoom AND $xf.options.siropuChatGuestRoom == $chat.roomId AND $xf.session.siropuChatGuestNickname == '') ? phrase('siropu_chat_type_nick_to_set_your_nickname') : phrase('siropu_chat_write_public_message')) : phrase('siropu_chat_write_private_message') }}" rowtype="fullWidth noLabel" rows="1" maxlength="{$xf.options.siropuChatMaxMessageLength}" removebuttons="{$chat.disabledButtons}" data-min-height="40" />
+		<xf:if is="$xf.options.siropuChatEditorSubmitButton">
+			<xf:button type="submit" class="button--link"><i class="fa fa-paper-plane" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_submit') }}</span></xf:button>
+		</xf:if>
+	</form>
+	<xf:macro template="siropu_chat_ads_macros" name="ads" arg-position="belowEditor" arg-ads="{$chat.ads.belowEditor}" />
+</div>]]></template>
+  <template type="public" title="siropu_chat_editor_dialog_chat" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_image_uploads') }}</xf:title>
+
+<xf:css src="attachments.less" />
+<xf:css src="siropu_chat_attachments.less" />
+
+<xf:js src="siropu/chat/attachment.js" min="1" />
+<xf:js prod="xf/attachment_manager-compiled.js" dev="vendor/flow.js/flow-compiled.js, xf/attachment_manager.js" />
+
+<xf:form action="{{ link('attachments/upload', null, {'type': 'siropu_chat', 'context': $attachmentData.context, 'hash': $attachmentData.hash}) }}" ajax="true" class="block siropuChatUploads" data-xf-init="attachment-manager" autofocus="off">
+	<div class="block-container">
+		<div class="block-body block-row">
+			<p>
+				<xf:button href="{{ link('attachments/upload', null, {'type': 'siropu_chat', 'context': $attachmentData.context, 'hash': $attachmentData.hash}) }}" target="_blank" class="js-attachmentUpload button--link" data-accept=".{$attachmentData.constraints.extensions|join(',.')}">
+					<i class="fa fa-upload" aria-hidden="true"></i> {{ phrase('siropu_chat_upload_image') }}
+				</xf:button>
+			</p>
+
+			<ul class="attachUploadList js-attachmentFiles u-hidden"></ul>
+
+			<xf:if is="$attachmentList is not empty">
+				<ul class="attachUploadList">
+					<xf:foreach loop="$attachmentList" value="$attachment">
+						<li class="js-attachmentFile" data-attachment-id="{$attachment.attachment_id}" data-url="{{ link('attachments', $attachment) }}">
+							<span>
+								<xf:if is="$attachment.has_thumbnail">
+									<img src="{$attachment.thumbnail_url}" alt="{$attachment.filename}" />
+										<xf:else />
+									<i class="fa fa-file-o fa-2x" aria-hidden="true"></i>
+								</xf:if>
+							</span>
+						</li>
+					</xf:foreach>
+				</ul>
+			</xf:if>
+
+			<script type="text/template" class="js-attachmentUploadTemplate">
+				<li class="js-attachmentFile" {{ mustache('#attachment_id', 'data-attachment-id="{{attachment_id}}"') }} data-url="{{ mustache('url') }}">
+					 <span>
+						  <xf:mustache name="#thumbnail_url">
+							   <img src="{{ mustache('thumbnail_url') }}">
+						  </xf:mustache>
+						  <xf:mustache name="^thumbnail_url">
+							   <i class="attachUploadList-placeholder" aria-hidden="true"></i>
+						  </xf:mustache>
+					 </span>
+					 <xf:mustache name="#uploading">
+						  <xf:button class="button--small js-attachmentAction" data-action="cancel">
+							   {{ phrase('button.cancel') }}
+						  </xf:button>
+					 </xf:mustache>
+					 <xf:mustache name="#uploading">
+						  <div class="contentRow-spaced">
+							   <div class="attachUploadList-progress js-attachmentProgress"></div>
+							   <div class="attachUploadList-error js-attachmentError"></div>
+						  </div>
+					 </xf:mustache>
+				</li>
+			</script>
+		</div>
+	</div>
+	<xf:submitrow>
+		<xf:html>
+			<xf:button icon="add" class="button--primary siropuChatDialogInsert">{{ phrase('siropu_chat_insert_selected') }}</xf:button>
+			<xf:button icon="delete" class="siropuChatDialogDelete">{{ phrase('siropu_chat_delete_selected') }}</xf:button>
+		</xf:html>
+	</xf:submitrow>
+	<xf:hiddenval name="hash">{$attachmentData.hash}</xf:hiddenval>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_guest" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('guest') }}</xf:title>
+
+<xf:form action="{{ link('chat/ban-guest', $guest) }}" class="block" data-edit="true" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:formrow label="{{ phrase('siropu_chat_guest_nickname') }}">{$guest.nickname}</xf:formrow>
+			<xf:formrow label="{{ phrase('last_activity') }}"><xf:date time="{$guest.lastActivity}" /></xf:formrow>
+			<xf:formrow label="{{ phrase('ip') }}">{$guest.ip}</xf:formrow>
+			<xf:formrow label="{{ phrase('action') }}">
+				<xf:radio name="action" value="ban_ip">
+					<xf:option value="ban_ip">{{ phrase('siropu_chat_ban_ip') }}</xf:option>
+					<xf:option value="discourage_ip" label="{{ phrase('siropu_chat_discourage_ip') }}"></xf:option>
+				</xf:radio>
+				<p>
+					<xf:textbox name="reason" placeholder="{{ phrase('reason_for_banning') }}" />
+				</p>
+			</xf:formrow>
+		</div>
+		<xf:submitrow icon="submit" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_guest_macros" version_id="2000033" version_string="2.0.0 Beta 3"><![CDATA[<xf:macro name="username" arg-user="!">
+	<span class="siropuChatGuest">({{ phrase('siropu_chat_guest') }})</span>
+	<xf:if is="$xf.visitor.canSanctionSiropuChat()">
+		<xf:username user="$user" defaultname="{{ phrase('guest') }}" href="{{ link('chat/guest', '', {'nickname': $user.username}) }}" data-xf-click="overlay" />
+	<xf:else />
+		<xf:username user="$user" defaultname="{{ phrase('guest') }}" />
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_help" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_help') }}</xf:title>
+
+<xf:css src="siropu_chat_help.less" />
+
+<div class="block siropuChatHelp">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$commands is not empty">
+				<div class="block-row block-row--separated">
+					{{ phrase('siropu_chat_help_explain') }}
+				</div>
+				<xf:foreach loop="$commands" value="$command">
+					<div class="block-row block-row--separated">
+						<h3 class="block-textHeader">/{$command.command_name}</h3>
+						{$command.description|raw}
+					</div>
+				</xf:foreach>
+			</xf:if>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_help.less" version_id="200010" version_string="2.0.0"><![CDATA[.siropuChatHelp
+{
+	.block-container
+	{
+		max-height: 600px;
+		overflow: auto;
+	}
+}]]></template>
+  <template type="public" title="siropu_chat_js" version_id="2000051" version_string="2.0.0 RC 1"><![CDATA[XF.SiropuChat.Core = XF.extend(XF.SiropuChat.Core, {
+	serverTime: {$xf.time},
+	channel: '{$chat.channel}',
+	roomId: {$chat.roomId},
+	lastId: {$chat.lastRoomIds|json|raw},
+	convId: {$chat.convId},
+	convUnread: {$chat.convUnread|json|raw},
+	convOnly: {{ $chat.convOnly ? 1 : 0 }},
+	messageDisplayLimit: {$chat.messageDisplayLimit},
+	notificationTimeout: {{ $xf.options.siropuChatNotificationTimeout * 1000 }},
+	refreshActive: {{ $xf.options.siropuChatRefreshIntervalActive * 1000 }},
+	refreshActiveHidden: {{ $xf.options.siropuChatRefreshIntervalActiveHidden * 1000 }},
+	refreshInactive: {{ $xf.options.siropuChatRefreshIntervalInactive * 1000 }},
+	refreshInactiveHidden: {{ $xf.options.siropuChatRefreshIntervalInactiveHidden * 1000 }},
+	tabNotification: {{ $xf.options.siropuChatTabNotification ? 'true' : 'false' }},
+	inverse: {{ $chat.settings.inverse ?: 0 }},
+	floodCheck: {{ $xf.visitor.canBypassSiropuChatFloodCheck() ? 0 : $xf.options.siropuChatFloodCheckLength * 1000 }},
+	displayNavCount: {{ ($xf.options.siropuChatPage AND $xf.options.siropuChatNavUserCount) ? 'true' : 'false' }},
+	dynamicTitle: {{ $xf.options.siropuChatDynamicTitle ? 'true' : 'false' }},
+	commands: {{ $chat.commands|raw|json }}
+});
+
+jQuery.extend(XF.phrases, {
+	siropu_chat_write_public_message: "{{ phrase('siropu_chat_write_public_message')|escape('js') }}",
+	siropu_chat_write_private_message: "{{ phrase('siropu_chat_write_private_message')|escape('js') }}",
+	siropu_chat_new_message: "{{ phrase('siropu_chat_new_message')|escape('js') }}",
+	siropu_chat_new_public_message: "{{ phrase('siropu_chat_new_public_message')|escape('js') }}",
+	siropu_chat_new_whisper_message: "{{ phrase('siropu_chat_new_whisper_message')|escape('js') }}",
+	siropu_chat_new_private_message: "{{ phrase('siropu_chat_new_private_message')|escape('js') }}",
+	siropu_chat_posting_message: "{{ phrase('siropu_chat_posting_message')|escape('js') }}",
+	siropu_chat_please_wait: "{{ phrase('siropu_chat_please_wait')|escape('js') }}",
+	siropu_chat_please_wait_x_seconds: "{{ phrase('siropu_chat_please_wait_x_seconds', {'num': $xf.options.siropuChatFloodCheckLength})|escape('js') }}",
+	siropu_chat_no_response: "{{ phrase('siropu_chat_no_response')|escape('js') }}",
+	siropu_chat_loading_conversation: "{{ phrase('siropu_chat_loading_conversation')|escape('js') }}",
+	siropu_chat_confirm_conversation_leave: "{{ phrase('siropu_chat_confirm_conversation_leave')|escape('js') }}",
+	siropu_chat_settings_change_reload_page: "{{ phrase('siropu_chat_settings_change_reload_page')|escape('js') }}",
+	siropu_chat_room_is_read_only: "{{ phrase('siropu_chat_room_is_read_only')|escape('js') }}",
+	siropu_chat_no_conversations_started: "{{ phrase('siropu_chat_no_conversations_started')|escape('js') }}",
+	siropu_chat_load_more_messages: "{{ phrase('siropu_chat_load_more_messages')|escape('js') }}",
+	siropu_chat_all_messages_have_been_loaded: "{{ phrase('siropu_chat_all_messages_have_been_loaded')|escape('js') }}",
+	siropu_chat_loading_conversation_messages: "{{ phrase('siropu_chat_loading_conversation_messages')|escape('js') }}",
+	siropu_chat_has_been_disabled: "{{ phrase('siropu_chat_has_been_disabled')|escape('js') }}"
+});]]></template>
+  <template type="public" title="siropu_chat_logout" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_logout') }}</xf:title>
+
+<xf:form action="{{ link('chat/logout') }}" class="block" data-xf-init="siropu-chat-logout" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('siropu_chat_are_you_sure_you_want_to_logout') }}
+			</xf:inforow>
+		</div>
+		<xf:submitrow submit="{{ phrase('siropu_chat_logout') }}" rowtype="simple"  class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_message_list" version_id="200010" version_string="2.0.0"><![CDATA[<xf:macro name="room" arg-messages="!">
+	<xf:foreach loop="$messages" value="$message">
+		<xf:include template="siropu_chat_room_message_row" />
+	</xf:foreach>
+</xf:macro>
+
+<xf:macro name="conversation" arg-messages="!">
+	<xf:foreach loop="$messages" value="$message">
+		<xf:include template="siropu_chat_conversation_message_row" />
+	</xf:foreach>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_notice_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_edit_notice') }}</xf:title>
+
+<xf:form action="{{ link('chat/edit-notice') }}" ajax="true" class="block" data-xf-init="siropu-chat-edit-notice">
+	<div class="block-container">
+		<div class="block-body">
+			<h2 class="block-tabHeader tabs" data-xf-init="tabs" role="tablist">
+				<a class="tabs-tab is-active" role="tab" tabindex="0" aria-controls="{{ unique_id('notice1') }}">{{ phrase('siropu_chat_notice') }} 1</a>
+				<a class="tabs-tab" role="tab" tabindex="0" aria-controls="{{ unique_id('notice2') }}">{{ phrase('siropu_chat_notice') }} 2</a>
+				<a class="tabs-tab" role="tab" tabindex="0" aria-controls="{{ unique_id('notice2') }}">{{ phrase('siropu_chat_notice') }} 3</a>
+				<a class="tabs-tab" role="tab" tabindex="0" aria-controls="{{ unique_id('notice2') }}">{{ phrase('siropu_chat_notice') }} 4</a>
+				<a class="tabs-tab" role="tab" tabindex="0" aria-controls="{{ unique_id('notice2') }}">{{ phrase('siropu_chat_notice') }} 5</a>
+			</h2>
+			<ul class="tabPanes">
+				<li class="is-active" role="tabpanel" id="{{ unique_id('notice1') }}">
+					<xf:editorrow name="notice[1]" value="{$xf.options.siropuChatNotice.0}" rowtype="fullWidth noLabel" />
+				</li>
+				<li class="is-active" role="tabpanel" id="{{ unique_id('notice2') }}">
+					<xf:editorrow name="notice[2]" value="{$xf.options.siropuChatNotice.1}" rowtype="fullWidth noLabel" />
+				</li>
+				<li class="is-active" role="tabpanel" id="{{ unique_id('notice3') }}">
+					<xf:editorrow name="notice[3]" value="{$xf.options.siropuChatNotice.2}" rowtype="fullWidth noLabel" />
+				</li>
+				<li class="is-active" role="tabpanel" id="{{ unique_id('notice4') }}">
+					<xf:editorrow name="notice[4]" value="{$xf.options.siropuChatNotice.3}" rowtype="fullWidth noLabel" />
+				</li>
+				<li class="is-active" role="tabpanel" id="{{ unique_id('notice5') }}">
+					<xf:editorrow name="notice[5]" value="{$xf.options.siropuChatNotice.4}" rowtype="fullWidth noLabel" />
+				</li>
+			</ul>
+		</div>
+	</div>
+	<xf:submitrow icon="save" rowtype="simple" class="js-overlayClose">
+		<xf:html>
+			<xf:checkbox name="remove_all" standalone="true">
+				<xf:option value="1" label="{{ phrase('siropu_chat_remove_notice') }}" />
+			</xf:checkbox>
+		</xf:html>
+	</xf:submitrow>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_notice_macros" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:macro name="notice" arg-notice="!">
+	<xf:if is="$notice is not empty">
+		<div id="siropuChatNotice">
+			<i class="fa fa-bullhorn" aria-hidden="true"></i> <span>{{ bb_code($notice, 'siropu_chat', null) }}</span> <xf:if is="$xf.visitor.canEditSiropuChatNotice()"><a href="{{ link('chat/edit-notice') }}" data-xf-click="overlay" data-cache="false">{{ phrase('edit') }}</a></xf:if>
+		</div>
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="admin" title="siropu_chat_option_template_adNotice" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<xf:formrow label="{$option.title}" explain="{$explainHtml}" hint="{$editHtml}" rowtype="input" hint="{$hintHtml}">
+	<ul class="listPlain inputGroup-container">
+		<xf:foreach loop="$option.option_value" value="$value">
+			<li class="inputGroup">
+				<xf:textarea name="{$inputName}[]" value="{$value}" rows="3" />
+			</li>
+		</xf:foreach>
+		<li class="inputGroup" data-xf-init="field-adder" data-increment-format="{$inputName}[]">
+			<xf:textarea name="{$inputName}[]" rows="3" />
+		</li>
+	</ul>
+
+	{$listedHtml}
+</xf:formrow>]]></template>
+  <template type="public" title="siropu_chat_page" version_id="2000051" version_string="2.0.0 RC 1"><![CDATA[<xf:title>{{ phrase('siropu_chat') }}</xf:title>
+<xf:h1 hidden="true" />
+
+<xf:if is="$chat.isFullPage">
+	<xf:page option="template">SIROPU_CHAT_CONTAINER</xf:page>
+</xf:if>
+
+<xf:widgetpos id="siropu_chat_page" context-position="chat_page" context-params="{$chat}" />
+<xf:widgetpos id="siropu_chat_page_sidebar" position="sidebar" />]]></template>
+  <template type="public" title="siropu_chat_room_delete" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:js src="siropu/chat/room.min.js" />
+
+<xf:form action="{{ link('chat/room/delete', $room) }}" class="block" ajax="true" data-xf-init="siropu-chat-room-delete">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+			<p>{{ phrase('please_confirm_that_you_want_to_delete_following:') }}</p>
+			<strong>{$room.room_name}</strong>
+			</xf:inforow>
+		</div>
+		<xf:submitrow icon="delete" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:if is="$room.isInsert()">
+	<xf:title>{{ phrase('siropu_chat_room_create') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('siropu_chat_room_edit') }}</xf:title>
+</xf:if>
+
+<xf:js src="siropu/chat/room.min.js" />
+
+<xf:form action="{{ link('chat/room/save', $room) }}" class="block" ajax="true" data-xf-init="siropu-chat-room-save">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow name="room_name" label="{{ phrase('siropu_chat_room_name') }}" value="{$room.room_name}" maxlength="{{ max_length($room, 'room_name') }}" />
+			<xf:textarearow name="room_description" label="{{ phrase('siropu_chat_room_description') }}" value="{$room.room_description}" rows="3" maxlength="{{ max_length($room, 'room_description') }}" />
+			<xf:if is="$xf.visitor.canPasswordProtectSiropuChatRooms() AND !$room.isMain()">
+				<xf:textboxrow name="room_password" label="{{ phrase('siropu_chat_room_password') }}" value="{$room.room_password}" maxlength="{{ max_length($room, 'room_password') }}" />
+			</xf:if>
+			<xf:if is="$xf.visitor.is_admin">
+				<h2 class="block-formSectionHeader"><span class="block-formSectionHeader-aligner">{{ phrase('siropu_chat_admin_options') }}</span></h2>
+				<xf:checkboxrow label="{{ phrase('user_groups') }}" explain="{{ phrase('siropu_chat_room_user_groups_explain') }}">
+					<xf:foreach loop="$userGroups" value="$group">
+						<xf:option name="room_user_groups[]" value="{$group.user_group_id}" label="{$group.title}" checked="{{ in_array($group.user_group_id, $room.room_user_groups) ? 'checked' : '' }}" />
+					</xf:foreach>
+				</xf:checkboxrow>
+				<hr class="formRowSep" />
+				<xf:checkboxrow explain="{{ phrase('siropu_chat_room_read_only_explain') }}">
+					<xf:option name="room_readonly" value="1" label="{{ phrase('siropu_chat_room_read_only') }}" checked="{{ $room.room_readonly ? 'checked' : '' }}" />
+				</xf:checkboxrow>
+				<hr class="formRowSep" />
+				<xf:checkboxrow explain="{{ phrase('siropu_chat_room_locked_explain') }}">
+					<xf:option label="{{ phrase('siropu_chat_room_locked') }}" checked="{{ $room.room_locked ? 'checked' : '' }}">
+						<xf:dependent>
+							<xf:dateinput name="room_locked" value="{{ $room.room_locked ? date($room.room_locked, 'Y-m-d') : '' }}" placeholder="{{ phrase('until...') }}" />
+						</xf:dependent>
+					</xf:option>
+				</xf:checkboxrow>
+				<hr class="formRowSep" />
+				<xf:numberboxrow name="room_prune" min="0" label="{{ phrase('siropu_chat_room_auto_prune') }}" explain="{{ phrase('siropu_chat_room_auto_prune_explain') }}" value="{$room.room_prune}" units="{{ phrase('hours') }}" />
+				<hr class="formRowSep" />
+				<xf:textboxrow name="room_thread_id" label="{{ phrase('siropu_chat_room_thread_id') }}" explain="{{ phrase('siropu_chat_room_thread_id_explain') }}" value="{$room.room_thread_id}" />
+			</xf:if>
+		</div>
+		<xf:submitrow icon="save" rowtype="simple" sticky="true" class="js-overlayClose">
+			<xf:html>
+				<xf:if is="$room.isInsert()">
+					<xf:checkbox name="join_room" standalone="true">
+						<xf:option value="1" label="{{ phrase('siropu_chat_room_join') }}" checked="checked" />
+					</xf:checkbox>
+				</xf:if>
+			</xf:html>
+		</xf:submitrow>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_join" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/room', $room) }}" class="block">
+	<div class="block-container">
+		<div class="block-header">
+			{$room.room_name}
+			<div class="block-desc">{$room.room_description}</div>
+		</div>
+		<div class="block-body">
+			<xf:if is="$room.room_password">
+				<xf:inforow>{{ phrase('siropu_chat_room_is_password_protected') }}</xf:inforow>
+				<xf:textboxrow name="password" label="{{ phrase('password') }}" />
+				<xf:submitrow submit="{{ phrase('siropu_chat_room_join') }}" rowtype="simple" />
+			<xf:else />
+				<xf:inforow>{{ phrase('siropu_chat_room_no_permission_to_join') }}</xf:inforow>
+			</xf:if>
+		</div>
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_link" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_link_to_this_room') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow label="{{ phrase('siropu_chat_room_url') }}" value="{{ link('full:chat/room/', $room) }}" />
+			<xf:if is="$xf.visitor.is_admin">
+				<xf:textboxrow label="{{ phrase('siropu_chat_room_full_page_url') }}" value="{{ link('full:chat/room/', $room, {'fullpage': true}) }}" />
+				<xf:textarearow label="{{ phrase('siropu_chat_room_embed_code') }}" value="<iframe src=\"{{ link('full:chat/room/', $room, {'fullpage': true}) }}\" width=\"100%\" height=\"400\" frameborder=\"0\"></iframe>" rows="3" />
+			</xf:if>
+		</div>
+		<xf:submitrow submit="{{ phrase('okay') }}" rowtype="simple" class="js-overlayClose" />
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_room_list" version_id="200010" version_string="2.0.0"><![CDATA[<xf:css src="siropu_chat_room_list.less" />
+
+<xf:if contentcheck="true">
+	<li id="siropuChatRoomListOptions">
+		<xf:contentcheck>
+			<xf:if is="$xf.visitor.canCreateSiropuChatRooms()">
+				<a href="{{ link('chat/room/create') }}" class="button button--link" data-xf-click="overlay"><i class="fa fa-plus" aria-hidden="true"></i> {{ phrase('siropu_chat_create_room') }}</a>
+			</xf:if>
+			<xf:if is="{{ count($rooms) > 5 }}">
+				<input type="search" name="find" class="input" placeholder="{{ phrase('siropu_chat_type_to_find_rooms') }}" maxlength="100" autocomplete="off" data-xf-init="siropu-chat-find-rooms">
+			</xf:if>
+		</xf:contentcheck>
+	</li>
+</xf:if>
+
+<xf:foreach loop="$rooms" value="$room">
+	<xf:set var="$userCount" value="{{ count($users.{$room.room_id})|number }}" />
+	<xf:set var="$sanctionNotice" value="{{ $room.isSanctionNotice() ?: null }}" />
+	<li data-room-id="{$room.room_id}" data-room-name="{$room.room_name|censor|for_attr}">
+		<xf:if is="$sanctionNotice">
+			<div class="siropuChatRoomInfo">
+				<h3>{$room.room_name|censor}</h3>
+				<div class="siropuChatRoomSanctionNotice">
+					{$sanctionNotice}
+				</div>
+			</div>
+		<xf:else />	
+			<div class="siropuChatRoomInfo">
+				<h3>{$room.room_name|censor}<xf:if is="$room.isReadOnly()"> <i class="fa fa-eye" aria-hidden="true" title="{{ phrase('siropu_chat_room_read_only') }}" data-xf-init="tooltip"></i></xf:if></h3>
+				<div class="siropuChatRoomDescription">{$room.room_description|censor}</div>
+				<div class="siropuChatRoomDetails">{{ phrase('created_by') }} <xf:username user="$room.User" rich="true" defaultname="{{ phrase('unknown') }}" aria-hidden="true" />, <xf:date time="{$room.room_date}" /></div>
+				<div class="siropuChatRoomUsers">
+					<b>{$userCount}</b> {{ ($userCount > 1 OR $userCount == 0) ? phrase('users') : phrase('user') }}{{ $userCount > 0 ? ':' : '' }}
+					<xf:if is="$userCount">
+						<ul>
+							<xf:foreach loop="{$users.{$room.room_id}}" value="$user">
+								<li>
+									<xf:if is="!$user.user_id"><span class="siropuChatGuest">({{ phrase('siropu_chat_guest') }})</span> </xf:if><xf:username user="$user" rich="true" defaultname="{{ phrase('unknown') }}" aria-hidden="true" />
+								</li>
+							</xf:foreach>
+						</ul>
+					</xf:if>
+				</div>
+			</div>
+			<div class="siropuChatRoomManage">
+				<a href="{{ link('chat/room/link', $room) }}" class="siropuChatRoomLink" title="{{ phrase('link') }}" data-xf-click="overlay"><i class="fa fa-link" aria-hidden="true"></i><span>{{ phrase('link') }}</span></a>
+				<xf:if is="$xf.visitor.canViewSiropuChatSanctions()">
+					<a href="{{ link('chat/room/sanctions', $room) }}" class="siropuChatRoomSanctions" title="{{ phrase('siropu_chat_sanctions') }}" data-xf-click="overlay"><i class="fa fa-ban" aria-hidden="true"></i><span>{{ phrase('siropu_chat_sanctions') }}</span></a>
+				</xf:if>
+				<xf:if is="$room.canEdit()">
+					<a href="{{ link('chat/room/edit', $room) }}" class="siropuChatRoomEdit" title="{{ phrase('edit') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-pencil-square" aria-hidden="true"></i><span>{{ phrase('edit') }}</span></a>
+				</xf:if>
+				<xf:if is="$room.canDelete()">
+					<a href="{{ link('chat/room/delete', $room) }}" class="siropuChatRoomDelete" title="{{ phrase('delete') }}" data-xf-click="overlay"><i class="fa fa-trash" aria-hidden="true"></i><span>{{ phrase('delete') }}</span></a>
+				</xf:if>
+			</div>
+			<div class="siropuChatRoomAction">
+				<xf:if is="$room.isJoined()">
+					<xf:form action="{{ link('chat/room/leave', $room) }}" class="siropuChatRoomLeave">
+						<button type="submit" class="button button--cta"><i class="fa fa-sign-out" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_room_leave') }}</span></button>
+					</xf:form>
+					<xf:else />
+					<xf:form action="{{ link('chat/room/join', $room) }}" class="siropuChatRoomJoin">
+						<xf:if is="$room.canJoin()">
+							<button type="submit" class="button"><i class="fa fa-sign-in" aria-hidden="true"></i> <span>{{ phrase('siropu_chat_room_join') }}</span></button>
+							<xf:else />
+							<xf:if is="$room.room_password">
+								<input type="text" name="password" class="input siropuChatRoomPassword" placeholder="{{ phrase('siropu_chat_room_password') }}">
+							</xf:if>
+							<button type="submit" class="button">
+								<i class="fa fa-lock" aria-hidden="true"></i>
+								<xf:if is="$room.isLocked()">
+									{{ phrase('siropu_chat_locked_until', {'date': date($room.room_locked, 'M d, Y')}) }}
+									<xf:else />
+									{{ phrase('siropu_chat_room_join') }}
+								</xf:if>
+							</button>
+						</xf:if>
+					</xf:form>
+				</xf:if>
+			</div>
+		</xf:if>
+	</li>
+</xf:foreach>]]></template>
+  <template type="public" title="siropu_chat_room_list.less" version_id="200010" version_string="2.0.0"><![CDATA[#siropuChatRooms
+{
+	> li[data-room-id]
+	{
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+		.xf-siropuChatRoomListItem();
+
+		&:last-child
+		{
+			margin-bottom: 0;
+		}
+		> div
+		{
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+}
+#siropuChatRoomListOptions
+{
+	position: sticky;
+	top: 0;
+	margin-bottom: 10px;
+
+	a
+	{
+		margin-right: 5px;
+	}
+	input
+	{
+		display: inline-block;
+		vertical-align: middle;
+		width: auto;
+		padding: 3px 7px;
+	}
+}
+.siropuChatRoomInfo
+{
+	width: 60%;
+	vertical-align: top;
+
+	h3
+	{
+		margin: 0;
+		display: initial;
+		color: @xf-textColorDimmed;
+		cursor: pointer;
+	}
+	div
+	{
+		color: @xf-textColorMuted;
+	}
+	.siropuChatRoomSanctionNotice
+	{
+		color: crimson;
+	}
+	.username
+	{
+		font-weight: normal !important;
+	}
+}
+div.siropuChatRoomDetails,
+div.siropuChatRoomUsers
+{
+	display: inline-block;
+	font-size: 12px;
+	font-style: italic;
+}
+div.siropuChatRoomDetails
+{
+	&:after
+	{
+		content: " / ";
+	}
+}
+div.siropuChatRoomUsers
+{
+	ul
+	{
+		display: inline-block;
+		margin: 0;
+		padding: 0;
+
+		li
+		{
+			display: inline-block;
+
+			&:after
+			{
+				content: ", ";
+			}
+			&:last-child:after
+			{
+				content: "";
+			}
+		}
+	}
+}
+.siropuChatRoomManage
+{
+	width: 20%;
+	text-align: right;
+	font-size: 16px;
+
+	span
+	{
+		display: none;
+		font-size: 14px;
+		margin-left: 5px;
+	}
+}
+.siropuChatRoomAction
+{
+	width: 20%;
+	text-align: right;
+	position: relative;
+}
+.siropuChatRoomPassword
+{
+	width: 170px;
+	position: absolute;
+	right: 100px;
+	padding: 5px 10px;
+	display: none;
+}
+.chatResponsive()
+{
+	#siropuChatRooms
+	{
+		> li[data-room-id]
+		{
+			display: block;
+			padding-bottom: 20px;
+			border-bottom: 1px solid #eee;
+			
+			> div
+			{
+				display: block;
+				width: auto;
+			}
+			&:last-child
+			{
+				border-bottom: 0;
+				padding-bottom: 0;
+			}
+		}
+	}
+	.siropuChatRoomDetails
+	{
+		&:after
+		{
+			content: "";
+		}
+	}
+	div.siropuChatRoomUsers
+	{
+		display: block;
+	}
+	div.siropuChatRoomManage
+	{
+		text-align: center;
+		margin: 10px 0;
+
+		span
+		{
+			display: initial;
+		}
+	}
+	div.siropuChatRoomAction
+	{
+		.button
+		{
+			display: block;
+			width: 100%;
+		}
+	}
+}
+@media (max-width: @xf-responsiveNarrow)
+{
+	.chatResponsive();
+}
+#siropuChat.siropuChatSidebar
+{
+	.chatResponsive();
+}]]></template>
+  <template type="public" title="siropu_chat_room_message_delete" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<xf:title>{{ phrase('siropu_chat_delete_message') }}</xf:title>
+
+<xf:js src="siropu/chat/message.min.js" />
+
+<xf:form action="{{ link('chat/message/delete', $message) }}" class="block" data-xf-init="siropu-chat-message-delete" ajax="true">
+	<div class="block-container">
+		<div class="block-body block-row">
+			{{ bb_code($message.message_text, 'siropu_chat_room_message', $message.User) }}
+		</div>
+		<xf:submitrow icon="delete" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_message_edit" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_edit_message') }}</xf:title>
+
+<xf:js src="siropu/chat/message.min.js" />
+
+<xf:form action="{{ link('chat/message/edit', $message) }}" class="block" data-edit="true" data-xf-init="siropu-chat-message-save siropu-chat-form" data-multi-line="{{ $xf.options.siropuChatMultiLineMessages ? 'true' : 'false' }}" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:editorrow name="message" value="{$message.message_text}" rowtype="fullWidth noLabel" rows="1" removebuttons="{$disabledButtons}" data-min-height="40" />
+		</div>
+		<xf:submitrow icon="save" rowtype="simple" class="js-overlayClose" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_message_helper" version_id="2000370" version_string="2.0.3"><![CDATA[<xf:macro name="message_content" arg-message="!" arg-lastRow="" arg-isResponsive="{{ false }}">
+	<xf:set var="$richUsername"><xf:trim>
+		<xf:if is="$xf.options.siropuChatUserTaggingButton AND !$message.isSelf()">
+			<a role="button" class="siropuChatTag" title="{{ phrase('siropu_chat_tag_user') }}">@</a>
+		</xf:if>
+		<xf:if is="$message.User">
+			<xf:username user="$message.User" defaultname="{$message.message_username}" rich="true" />
+		<xf:else />
+			<xf:macro template="siropu_chat_guest_macros" name="username" arg-user="{{ {'username': $message.message_username} }}" />
+		</xf:if>
+	</xf:trim></xf:set>
+
+	<xf:set var="$botName" value="{{ $message.message_bot_name ?: $xf.options.siropuChatBotName }}" />
+
+	<xf:if is="$xf.options.siropuChatAvatarInMessageList">
+		<xf:if is="$message.User">
+			<xf:avatar user="$message.User" size="xxs" defaultname="{$message.message_username}" itemprop="image" />
+		<xf:else />
+			<xf:avatar user="$message.User" size="xxs" defaultname="{$message.message_username}" itemprop="image" href="" />
+		</xf:if>
+	</xf:if>
+
+	<xf:if is="$message.isBot()">
+		<xf:if is="$message.isBotNotification() AND !$xf.options.siropuChatActivityNotificationsBot">
+			{$richUsername}
+		<xf:else />
+			{$botName|raw}:
+		</xf:if>
+	<xf:elseif is="$message.isMe()" />
+		{$botName|raw}: {$richUsername}
+	<xf:else />
+		{$richUsername}:
+	</xf:if>
+	<xf:if is="$message.isWhisper()">
+		<span class="siropuChatRecipients" title="{$message.recipients}" data-recipients="{$message.recipients|for_attr}" data-xf-init="tooltip">({{ phrase('siropu_chat_whisper') }})</span>
+	</xf:if>
+	<span class="siropuChatMessageText"><xf:if is="$message.isError()">{{ phrase('siropu_chat_error') }} </xf:if>{{ $lastRow ? snippet($message.message, ($isResponsive ? 25 : 100), {'stripBbCode': true}) : bb_code($message.message|censor, 'siropu_chat_room_message', $message.User) }}</span>
+	<xf:if is="$message.hasLikes()">
+		<a href="{{ link('chat/message/likes', $message) }}" class="siropuChatMessageLikes" data-xf-click="overlay" data-cache="false">+{$message.message_like_count}</a>
+	</xf:if>
+	<xf:if is="$message.isEdited() AND $message.canViewHistory()">
+		<a href="{{ link('chat/message/history', $message) }}" class="siropuChatMessageEdited" title="{{ phrase('view_history') }}" data-xf-init="tooltip" data-xf-click="overlay" data-cache="false">{{ phrase('siropu_chat_edited') }}</a>
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_room_message_likes" version_id="2000370" version_string="2.0.3"><![CDATA[<xf:title>{{ phrase('siropu_chat_message_likes') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body block-row">
+			<xf:foreach loop="$users" value="$user">
+				<li class="block-row block-row--separated">
+					<xf:macro template="member_list_macros" name="item"
+							  arg-user="{$user}"
+							  arg-extraData="{{ date_time($message.getUserLikeDate($user.user_id)) }}" />
+				</li>
+			<xf:else />
+				{{ phrase('siropu_chat_no_message_likes') }}
+			</xf:foreach>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_room_message_link" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_link_to_this_message') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textboxrow label="{{ phrase('siropu_chat_message_url') }}" value="{{ link('full:chat/message/view', $message) }}" />
+		</div>
+		<xf:submitrow submit="{{ phrase('okay') }}" rowtype="simple" class="js-overlayClose" />
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_room_message_row" version_id="200010" version_string="2.0.0 Beta 1"><![CDATA[<li id="rm-{$message.message_id}" class="{$message.css_class}" data-id="{$message.message_id}" data-user-id="{$message.message_user_id}">
+	<div class="siropuChatMessageContentLeft">
+		<xf:if is="$message.isIgnored()"><i class="fa fa-eye-slash" aria-hidden="true"></i></xf:if>
+		<xf:macro template="siropu_chat_room_message_helper" name="message_content" arg-message="{$message}" />
+	</div>
+	<div class="siropuChatMessageContentRight">
+		<xf:if contentcheck="true">
+			<span class="siropuChatMessageActions">
+				<xf:contentcheck>
+					<xf:if is="$message.canLike()">
+						<xf:if is="$message.isLiked()">
+								<a href="{{ link('chat/message/unlike', $message) }}" title="{{ phrase('unlike') }}" data-xf-click="siropu-chat-unlike"><i class="fa fa-thumbs-o-down" aria-hidden="true"></i> <span>{{ phrase('unlike') }}</span></a>
+							<xf:else />
+								<a href="{{ link('chat/message/like', $message) }}" title="{{ phrase('like') }}" data-xf-click="siropu-chat-like"><i class="fa fa-thumbs-o-up" aria-hidden="true"></i> <span>{{ phrase('like') }}</span></a>
+						</xf:if>
+					</xf:if>
+					<xf:if is="$message.canQuote()">
+						<a href="{{ link('chat/message/quote', $message) }}" title="{{ phrase('quote') }}" data-xf-click="siropu-chat-quote"><i class="fa fa-quote-right" aria-hidden="true"></i> <span>{{ phrase('quote') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canLink()">
+						<a href="{{ link('chat/message/link', $message) }}" title="{{ phrase('link') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-link" aria-hidden="true"></i> <span>{{ phrase('link') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canReport()">
+						<a href="{{ link('chat/message/report', $message) }}" title="{{ phrase('report') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-flag" aria-hidden="true"></i> <span>{{ phrase('report') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canEdit()">
+						<a href="{{ link('chat/message/edit', $message) }}" title="{{ phrase('edit') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-pencil-square" aria-hidden="true"></i> <span>{{ phrase('edit') }}</span></a>
+					</xf:if>
+					<xf:if is="$message.canDelete()">
+						<a href="{{ link('chat/message/delete', $message) }}" title="{{ phrase('delete') }}" data-xf-click="overlay" data-cache="false"><i class="fa fa-trash" aria-hidden="true"></i> <span>{{ phrase('delete') }}</span></a>
+					</xf:if>
+				</xf:contentcheck>
+			</span>
+		</xf:if>
+		<xf:date time="{$message.message_date}" class="siropuChatDateTime" />
+	</div>
+</li>]]></template>
+  <template type="public" title="siropu_chat_room_message_view" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_viewing_message_by', {'username': $message.message_username}) }}</xf:title>
+<xf:description><a href="{{ link('chat/room', $message.Room) }}" class="u-concealed">{$message.Room.room_name}</a></xf:description>
+
+<xf:css src="siropu_chat.less" />
+
+<xf:js src="siropu/chat/core.js" min="1">
+	<xf:include template="siropu_chat_js" />
+</xf:js>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<ul class="siropuChatRoom siropuChatMessages" data-room-id="{$message.message_room_id}" data-xf-init="siropu-chat-messages">
+				<xf:include template="siropu_chat_room_message_row" />
+			</ul>
+		</div>
+		<xf:if is="$xf.visitor.canViewSiropuChatArchive()">
+			<div class="block-footer">
+					<span class="block-footer-controls"><a href="{{ link('chat/archive/message', $message) }}" class="button"><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> {{ phrase('siropu_chat_view_message_in_archive') }}</a></span>
+			</div>
+		</xf:if>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_room_sanction" version_id="200010" version_string="2.0.0 Beta 1"><![CDATA[<xf:title>{{ phrase('siropu_chat_sanction_user') }}<xf:if is="$user is not empty">: {$user.username}</xf:if></xf:title>
+
+<xf:form action="{{ link('chat/room/sanction', {'room_id': $room.room_id, 'user_id': $user.user_id}) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:selectrow label="{{ phrase('siropu_chat_sanction_type') }}" name="sanction_type" value="kick" class="input--autoSize">
+				<xf:option value="mute">{{ phrase('siropu_chat_mute') }}</xf:option>
+				<xf:option value="kick">{{ phrase('siropu_chat_kick') }}</xf:option>
+			</xf:selectrow>
+			<xf:numberboxrow name="length" label="{{ phrase('siropu_chat_sanction_length') }}" min="1" max="24" units="{{ phrase('hours') }}" />
+			<xf:textboxrow name="reason" label="{{ phrase('siropu_chat_sanction_reason') }}" />
+		</div>
+		<xf:submitrow rowtype="simple" submit="{{ phrase('siropu_chat_apply_sanction') }}" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_room_sanctions" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_room_sanctions') }}</xf:title>
+
+
+<div class="block">
+	<div class="block-container js-roomSanctionList{$room.room_id}">
+		<ol class="block-body">
+			<xf:if is="{{ count($sanctions) }}">
+				<xf:foreach loop="$sanctions" value="$sanction">
+					<li class="block-row block-row--separated">
+						<xf:set var="$extraData">
+							<div style="text-align: right;">
+								<b>{{ phrase('siropu_chat_sanction_type') }}:</b> {$sanction.getTypePhrase()}<br>
+								<b>{{ phrase('siropu_chat_sanction_start') }}:</b> <xf:date time="{$sanction.sanction_start}" /><br>
+								<b>{{ phrase('siropu_chat_sanction_end') }}:</b>
+								<xf:if is="$sanction.sanction_end">
+									<xf:date time="{$sanction.sanction_end}" />
+								<xf:else />
+									{{ phrase('never') }}
+								</xf:if>
+								<br><b>{{ phrase('siropu_chat_sanction_by') }}:</b> <xf:username user="{$sanction.Author}" />
+								<xf:if is="$sanction.sanction_reason">
+									<i class="fa fa-question-circle-o" title="{{ phrase('siropu_chat_sanction_reason') }}: {$sanction.sanction_reason|for_attr}" data-xf-init="tooltip"></i>
+								</xf:if>
+								<xf:if is="$sanction.canRemove()">
+									<a href="{{ link('chat/sanction/edit', $sanction) }}" title="{{ phrase('siropu_chat_edit_sanction') }}" data-xf-init="tooltip" data-xf-click="overlay"><i class="fa fa-cog" aria-hidden="true"></i></a>
+									<a href="{{ link('chat/sanction/lift', $sanction) }}" title="{{ phrase('siropu_chat_lift_sanction') }}" data-xf-init="tooltip" data-xf-click="overlay"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+								</xf:if>
+							</div>
+						</xf:set>
+						<xf:macro template="member_list_macros" name="item" arg-user="{$sanction.User}" arg-extraData="{$extraData}" />
+					</li>
+				</xf:foreach>
+			<xf:else />
+				<li class="block-row">{{ phrase('siropu_chat_no_room_sanctions') }}</li>
+			</xf:if>
+		</ol>
+		<xf:if is="$hasMore">
+			<div class="block-footer">
+				<span class="block-footer-controls"><xf:button href="{{ link('chat/room/sanctions', $room, {'page': $page + 1}) }}"
+					data-xf-click="inserter"
+					data-replace=".js-roomSanctionList{$room.room_id}"
+					data-scroll-target="< .overlay">
+					{{ phrase('more...') }}
+				</xf:button></span>
+			</div>
+		</xf:if>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_room_tab" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<a role="button" data-target="room" data-room-id="{$room.room_id}" data-title="{$room.room_name|for_attr}" data-readonly="{{ $room.room_readonly ?: 0 }}"{{ ($room.isActive() AND $chat.channel == 'room') ? ' class="siropuChatActiveTab"' : '' }}>{$room.room_name|censor} <span class="siropuChatTabCount{{ $room.getUserCount($chat.users) ? 'Active' : 'Inactive' }}">{{ $room.getUserCount($chat.users) }}</span></a>]]></template>
+  <template type="public" title="siropu_chat_rules" version_id="2000035" version_string="2.0.0 Beta 5"><![CDATA[<xf:title>{{ phrase('siropu_chat_rules') }}</xf:title>
+
+<div class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<div class="block-row">
+				<xf:if is="$xf.options.siropuChatRules">
+					{{ bb_code($xf.options.siropuChatRules, 'siropu_chat', null) }}
+				<xf:else />
+					{{ phrase('siropu_chat_no_rules') }}
+				</xf:if>
+			</div>
+			<xf:if is="$xf.visitor.canEditSiropuChatRules()">
+				<div class="block-row">
+					<xf:button href="{{ link('chat/edit-rules') }}" class="js-overlayClose" icon="write" data-xf-click="overlay">{{ phrase('siropu_chat_edit_rules') }}</xf:button>
+				</div>
+			</xf:if>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_rules_edit" version_id="1" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_edit_rules') }}</xf:title>
+
+<xf:form action="{{ link('chat/edit-rules') }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:editorrow name="rules" value="{$xf.options.siropuChatRules}" rowtype="fullWidth noLabel" />
+		</div>
+	</div>
+	<xf:submitrow icon="save" />
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_sanction_apply" version_id="2000033" version_string="2.0.0 Beta 3"><![CDATA[<xf:if is="$sanction.isUpdate()">
+	<xf:title>{{ phrase('siropu_chat_edit_sanction') }}</xf:title>
+<xf:else />
+	<xf:title>{{ phrase('siropu_chat_sanction_user') }}<xf:if is="$user is not empty">: {$user.username}</xf:if></xf:title>
+</xf:if>
+
+<xf:form action="{{ link('chat/sanction/apply', $sanction) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:if is="$user is not empty">
+				<xf:hiddenval name="user_id" value="{$user.user_id}" />
+			<xf:elseif is="$sanction.isInsert()" />
+				<xf:textboxrow name="username" label="{{ phrase('user') }}" value="{$user.username}" data-xf-init="auto-complete" />
+			</xf:if>
+			<xf:selectrow label="{{ phrase('siropu_chat_sanction_type') }}" name="sanction_type" value="{{ $sanction.sanction_type ?: 'ban' }}" class="input--autoSize">
+				<xf:option value="ban">{{ phrase('siropu_chat_ban') }}</xf:option>
+				<xf:option value="kick">{{ phrase('siropu_chat_kick') }}</xf:option>
+				<xf:option value="mute">{{ phrase('siropu_chat_mute') }}</xf:option>
+			</xf:selectrow>
+			<xf:if is="$sanction.isInsert()">
+				<xf:radiorow name="method" label="{{ phrase('siropu_chat_apply_sanction_for') }}" value="{{ $roomId ? 'room' : 'chat' }}">
+					<xf:option value="chat">{{ phrase('siropu_chat_all_rooms') }}</xf:option>
+					<xf:option value="room" label="{{ phrase('siropu_chat_selected_rooms') }}">
+						<xf:dependent>
+							<xf:select name="room_id" value="{$roomId}" multiple="true">
+								<xf:foreach loop="$rooms" value="$room">
+									<xf:option value="{$room.room_id}">{$room.room_name}</xf:option>
+								</xf:foreach>
+							</xf:select>
+						</xf:dependent>
+					</xf:option>
+				</xf:radiorow>
+			</xf:if>
+			<xf:radiorow name="length_type" label="{{ phrase('siropu_chat_sanction_length') }}" value="{{ $sanction.sanction_end == 0 ? 'perm' : 'temp' }}">
+				<xf:option value="perm">{{ phrase('permanent') }}</xf:option>
+				<xf:option value="temp" label="{{ phrase('temporary') }}">
+					<xf:dependent>
+							<div class="inputGroup" style="margin-bottom: 5px;">
+								<xf:numberbox name="length_value" min="1" />
+								<xf:select name="length_option" class="input--autoSize" style="margin-left: 5px;">
+									<xf:option value="hours">{{ phrase('hours') }}</xf:option>
+									<xf:option value="days">{{ phrase('days') }}</xf:option>
+									<xf:option value="weeks">{{ phrase('weeks') }}</xf:option>
+									<xf:option value="months">{{ phrase('months') }}</xf:option>
+									<xf:option value="years">{{ phrase('years') }}</xf:option>
+								</xf:select>
+							</div>
+							<xf:dateinput name="length_date" placeholder="{{ phrase('until...') }}" />
+					</xf:dependent>
+				</xf:option>
+			</xf:radiorow>
+			<xf:textboxrow name="reason" label="{{ phrase('siropu_chat_sanction_reason') }}" value="{$sanction.sanction_reason}" />
+		</div>
+		<xf:submitrow rowtype="simple" submit="{{ phrase('siropu_chat_apply_sanction') }}" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_sanction_lift" version_id="200010" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('confirm_action') }}</xf:title>
+
+<xf:form action="{{ link('chat/sanction/lift', $sanction) }}" class="block" ajax="true">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:inforow rowtype="confirm">
+				{{ phrase('siropu_chat_lift_sanction_confirmation:') }}
+				<strong><xf:username user="{$sanction.User}" /></strong>
+			</xf:inforow>
+			<xf:formrow label="{{ phrase('siropu_chat_room') }}">
+				<xf:if is="$sanction.Room">
+					{$sanction.Room.room_name}
+				<xf:else />
+					{{ phrase('siropu_chat_all_rooms') }}
+				</xf:if>
+			</xf:formrow>
+			<xf:formrow label="{{ phrase('siropu_chat_sanction_type') }}">{$sanction.getTypePhrase()}</xf:formrow>
+			<xf:formrow label="{{ phrase('siropu_chat_sanction_start') }}"><xf:date time="{$sanction.sanction_start}" /></xf:formrow>
+			<xf:formrow label="{{ phrase('siropu_chat_sanction_end') }}">
+				<xf:if is="$sanction.sanction_end">
+					<xf:date time="{$sanction.sanction_end}" />
+				<xf:else />
+					{{ phrase('never') }}
+				</xf:if>
+			</xf:formrow>
+			<xf:formrow label="{{ phrase('siropu_chat_sanction_by') }}"><xf:username user="{$sanction.Author}" /></xf:formrow>
+			<xf:if is="$sanction.sanction_reason">
+				<xf:formrow label="{{ phrase('siropu_chat_sanction_reason') }}">
+					{$sanction.sanction_reason}
+				</xf:formrow>
+			</xf:if>
+		</div>
+		<xf:submitrow rowtype="simple" submit="{{ phrase('siropu_chat_lift_sanction') }}" />
+	</div>
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_sanction_list" version_id="2000032" version_string="2.0.0 Beta 2"><![CDATA[<xf:title>{{ phrase('siropu_chat_sanctioned_users') }}</xf:title>
+
+<xf:css src="structured_list.less" />
+
+<div class="block">
+	<div class="block-outer">
+		<div class="block-outer-opposite">
+			<xf:if is="$xf.visitor.canSanctionSiropuChat()">
+				<xf:button href="{{ link('chat/sanction') }}" class="button--cta" data-xf-click="overlay"><i class="fa fa-ban" aria-hidden="true"></i> {{ phrase('siropu_chat_sanction_user') }}</xf:button>
+			</xf:if>
+			<xf:button class="button--link menuTrigger" data-xf-click="menu" aria-expanded="false" aria-haspopup="true">{{ phrase('siropu_chat_find_sanctions') }}</xf:button>
+			<div class="menu" data-menu="menu" aria-hidden="true">
+				<xf:form action="{{ link('chat/sanctions') }}" class="menu-content">
+					<div class="menu-row">
+						{{ phrase('siropu_chat_find_sanctions_for_member:') }}
+						<xf:textbox name="username" ac="single" maxlength="{{ max_length($xf.visitor, 'username') }}" />
+					</div>
+					<div class="menu-footer">
+						<span class="menu-footer-controls"><xf:button type="submit" class="button--primary" icon="search" /></span>
+					</div>
+				</xf:form>
+			</div>
+		</div>
+	</div>
+    <div class="block-container">
+		<h2 class="block-tabHeader tabs">
+			<a href="{{ link('chat/sanctions/') }}" class="tabs-tab{{ $type == '' ? ' is-active' : '' }}">{{ phrase('siropu_chat_all_sanctions') }}</a>
+			<a href="{{ link('chat/sanctions/', null, {'type': 'ban'}) }}" class="tabs-tab{{ $type == 'ban' ? ' is-active' : '' }}">{{ phrase('siropu_chat_banned') }}</a>
+			<a href="{{ link('chat/sanctions/', null, {'type': 'kick'}) }}" class="tabs-tab{{ $type == 'kick' ? ' is-active' : '' }}">{{ phrase('siropu_chat_kicked') }}</a>
+			<a href="{{ link('chat/sanctions/', null, {'type': 'mute'}) }}" class="tabs-tab{{ $type == 'mute' ? ' is-active' : ''  }}">{{ phrase('siropu_chat_muted') }}</a>
+		</h2>
+        <div class="block-body">
+			<xf:if is="$sanctions is not empty">
+				<xf:datalist data-xf-init="responsive-data-list">
+					<xf:datarow rowtype="header">
+						<xf:cell>{{ phrase('user_name') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_room') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_sanction_type') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_sanction_start') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_sanction_end') }}</xf:cell>
+						<xf:cell>{{ phrase('siropu_chat_sanction_by') }}</xf:cell>
+						<xf:cell>&nbsp;</xf:cell>
+					</xf:datarow>
+					<xf:foreach loop="$sanctions" value="$sanction">
+						<xf:datarow rowclass="dataList-row--noHover">
+							<xf:cell><xf:avatar user="$sanction.User" size="xxs" /> <xf:username user="{$sanction.User}" /></xf:cell>
+							<xf:cell>
+								<xf:if is="$sanction.Room is not empty">
+									{$sanction.Room.room_name}
+								<xf:else />
+									{{ phrase('siropu_chat_all_rooms') }}
+								</xf:if>
+							</xf:cell>
+							<xf:cell>{$sanction.getTypePhrase()}</xf:cell>
+							<xf:cell><xf:date time="{$sanction.sanction_start}" /></xf:cell>
+							<xf:cell>
+								<xf:if is="$sanction.sanction_end">
+									<xf:date time="{$sanction.sanction_end}" />
+								<xf:else />
+									{{ phrase('never') }}
+								</xf:if>
+							</xf:cell>
+							<xf:cell><xf:avatar user="$sanction.Author" size="xxs" /> <xf:username user="{$sanction.Author}" /></xf:cell>
+							<xf:cell>
+								<xf:if is="$sanction.sanction_reason">
+									<i class="fa fa-question-circle-o" title="{{ phrase('siropu_chat_sanction_reason') }}: {$sanction.sanction_reason|for_attr}" data-xf-init="tooltip"></i>
+								</xf:if>
+								<xf:if is="$sanction.canRemove()">
+									<a href="{{ link('chat/sanction/edit', $sanction) }}" title="{{ phrase('siropu_chat_edit_sanction') }}" data-xf-init="tooltip" data-xf-click="overlay"><i class="fa fa-cog" aria-hidden="true"></i></a>
+									<a href="{{ link('chat/sanction/lift', $sanction) }}" title="{{ phrase('siropu_chat_lift_sanction') }}" data-xf-init="tooltip" data-xf-click="overlay"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+								</xf:if>
+							</xf:cell>
+						</xf:datarow>
+					</xf:foreach>
+				</xf:datalist>
+				<xf:pagenav page="{$page}" perpage="{$perPage}" total="{$total}" link="portal" wrapperclass="block" />
+			<xf:else />
+				<div class="block-row">{{ phrase('siropu_chat_no_sanctions') }}</div>
+			</xf:if>
+        </div>
+		<xf:if is="$sanctions is not empty">
+			<div class="block-footer">
+				{{ display_totals(count($sanctions), $total) }}
+			</div>
+		</xf:if>
+    </div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_status" version_id="1" version_string="2.0.0"><![CDATA[<xf:title>{{ phrase('siropu_chat_update_status') }}</xf:title>
+
+<xf:form action="{{ link('chat/update-status') }}" ajax="true" class="block">
+	<div class="block-container">
+		<div class="block-body">
+			<xf:textarearow name="status" value="{$xf.visitor.siropu_chat_status}" label="{{ phrase('status') }}" maxlength="{$xf.options.siropuChatStatusMaxLength}" autosize="true">
+				<xf:explain>{{ phrase('siropu_chat_update_status_explain', {'length': $xf.options.siropuChatStatusMaxLength}) }}</xf:explain>
+			</xf:textarearow>
+		</div>
+	</div>
+	<xf:submitrow icon="save" />
+</xf:form>]]></template>
+  <template type="public" title="siropu_chat_top_chatter_list" version_id="2000032" version_string="2.0.0 Beta 2"><![CDATA[<xf:title>{{ phrase('siropu_chat_top_chatters') }}</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <h2 class="block-tabHeader tabs">
+				<a href="{{ link('chat/top-chatters/') }}" class="tabs-tab{{ $from == '' ? ' is-active' : '' }}">{{ phrase('siropu_chat_all_time') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'today'}) }}" class="tabs-tab{{ $from == 'today' ? ' is-active' : '' }}">{{ phrase('siropu_chat_today') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'yesterday'}) }}" class="tabs-tab{{ $from == 'yesterday' ? ' is-active' : '' }}">{{ phrase('siropu_chat_yesterday') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'thisWeek'}) }}" class="tabs-tab{{ $from == 'thisWeek' ? ' is-active' : ''  }}">{{ phrase('siropu_chat_this_week') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'thisMonth'}) }}" class="tabs-tab{{ $from == 'thisMonth' ? ' is-active' : ''  }}">{{ phrase('siropu_chat_this_month') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'lastWeek'}) }}" class="tabs-tab{{ $from == 'lastWeek' ? ' is-active' : ''  }}">{{ phrase('siropu_chat_last_week') }}</a>
+				<a href="{{ link('chat/top-chatters/', null, {'from': 'lastMonth'}) }}" class="tabs-tab{{ $from == 'lastMonth' ? ' is-active' : ''  }}">{{ phrase('siropu_chat_last_month') }}</a>
+			</h2>
+			<ol class="block-body">
+				<xf:if is="$topChatters is not empty">
+					<xf:foreach loop="$topChatters" value="$user">
+						<li class="block-row block-row--separated">
+							<xf:macro template="member_list_macros" name="item"
+										arg-user="{$user}"
+										arg-extraData="{$user.siropu_chat_message_count}"
+										arg-extraDataBig="{{ true }}" />
+						</li>
+					</xf:foreach>
+				<xf:else />
+					<li class="block-row">{{ phrase('siropu_chat_no_top_chatters') }}</li>
+				</xf:if>
+			</ol>
+			<div class="block-footer">
+				{{ phrase('siropu_chat_last_update') }}: <xf:date time="{$lastUpdate}" />
+			</div>
+        </div>
+    </div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_user_list" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:macro name="room" arg-users="!" arg-roomId="1" arg-roomUserId="">
+	<xf:if is="$users is not empty">
+		<xf:foreach loop="$users" value="$user">
+			<li data-user-id="{$user.user_id}" data-username="{$user.username|for_attr}">
+				<xf:if is="$xf.options.siropuChatAvatarInUserList">
+					<xf:if is="$user.user_id">
+						<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+					<xf:else />
+						<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('guest') }}" itemprop="image" href="" />
+					</xf:if>
+				</xf:if>
+				<xf:if is="$user.user_id">
+					<xf:if contentcheck="true">
+						<a role="button" data-xf-click="menu" aria-expanded="false" aria-haspopup="true">
+							<xf:username user="$user" defaultname="{{ phrase('unknown') }}" href="" rich="true" />
+						</a>
+						<div class="menu" data-menu="menu" aria-hidden="true">
+							<div class="menu-content siropuChatUserMenu">
+								<xf:contentcheck>
+									<xf:if is="$xf.visitor.canWhisperSiropuChat() AND $xf.visitor.user_id != $user.user_id">
+										<a role="button" class="blockLink" data-xf-click="siropu-chat-whisper">{{ phrase('siropu_chat_whisper') }}</a>
+									</xf:if>
+									<xf:if is="$xf.visitor.canMessageSiropuChatUser($user) AND !$xf.visitor.isInConversationWithSiropuChatUser($user)">
+										<a role="button" class="blockLink" data-xf-click="siropu-chat-toggle-conv-form">{{ phrase('siropu_chat_start_private_conversation') }}</a>
+										<xf:macro template="siropu_chat_conversation_start" name="form" arg-recipient="{$user}" />
+									</xf:if>
+									<xf:if is="$xf.visitor.canSanctionSiropuChatUser($user)">
+										<a href="{{ link('chat/sanction', {'room_id': $roomId, 'user_id': $user.user_id, 'username': $user.username}) }}" class="blockLink" data-xf-click="overlay">{{ phrase('siropu_chat_sanction') }}</a>
+									<xf:elseif is="$xf.visitor.canRoomAuthorSanctionSiropuChatUser($user, $roomUserId)" />
+										<a href="{{ link('chat/room/sanction', {'room_id': $roomId, 'user_id': $user.user_id, 'username': $user.username}) }}" class="blockLink" data-xf-click="overlay">{{ phrase('siropu_chat_sanction') }}</a>
+									</xf:if>
+									<xf:if is="$user.user_id == $xf.visitor.user_id">
+										<a href="{{ link('chat/room/leave', {'room_id': $roomId}) }}" class="blockLink" data-xf-click="siropu-chat-leave-room">{{ phrase('siropu_chat_leave_room') }}</a>
+									</xf:if>
+								</xf:contentcheck>
+							</div>
+						</div>
+					<xf:else />
+						<xf:username user="$user" defaultname="{{ phrase('unknown') }}" rich="true" />
+					</xf:if>
+				<xf:else />
+					<xf:macro template="siropu_chat_guest_macros" name="username" arg-user="{$user}" />
+				</xf:if>
+				<xf:macro template="siropu_chat_user_macros" name="activity_status" arg-user="{$user}" arg-roomId="{$roomId}" />
+				<xf:macro template="siropu_chat_user_macros" name="user_status" arg-user="{$user}" />
+			</li>
+		</xf:foreach>
+	<xf:else />
+		<li class="siropuChatNoRoomUsers">{{ phrase('siropu_chat_no_one_is_chatting') }}</li>
+	</xf:if>
+</xf:macro>
+
+<xf:macro name="conversation" arg-conversations="!" arg-unread="" arg-channel="conv">
+	<xf:if is="$conversations is not empty">
+		<xf:foreach loop="$conversations" key="$convId" value="$conversation">
+			<li data-conv-id="{$convId}" data-username="{{ $conversation.Contact.username|for_attr }}" data-title="{{ phrase('siropu_chat_conversation_with_x', {'user': $conversation.Contact.username})|for_attr }}" class="{{ (count($unread.{$convId}) ? 'siropuChatNewMessage ' : '') . (($xf.visitor.getLastConvIdSiropuChat() == $convId AND $channel == 'conv') ? 'siropuChatActiveConversation' : '') }}">
+				<xf:if is="$xf.options.siropuChatAvatarInUserList">
+					<xf:avatar user="$conversation.Contact" size="xxs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+				</xf:if>
+				<xf:username user="$conversation.Contact" defaultname="{{ phrase('unknown') }}" href="" rich="true" />
+				<xf:macro template="siropu_chat_user_macros" name="activity_status" arg-user="{$conversation.Contact}" />
+				<a href="{{ link('chat/conversation/leave', $conversation) }}" class="siropuChatLeaveConversation" title="{{ phrase('siropu_chat_leave_conversation') }}" data-xf-init="tooltip" data-xf-click="overlay"><i class="fa fa-times-circle" aria-hidden="true"></i></a>
+				<xf:macro template="siropu_chat_user_macros" name="user_status" arg-user="{$conversation.Contact}" />
+			</li>
+		</xf:foreach>
+	</xf:if>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_user_macros" version_id="2000170" version_string="2.0.1"><![CDATA[<xf:macro name="user_status" arg-user="!">
+	<xf:if is="$user.siropu_chat_status AND !$xf.visitor.getSiropuChatSettings().hide_status">
+		<div class="siropuChatUserStatus">&#8627; {{ $user.siropu_chat_status|censor }}</div>
+	</xf:if>
+</xf:macro>
+
+<xf:macro name="activity_status" arg-user="!" arg-roomId="{{ null }}">
+	<span class="siropuChatActivityStatus" data-status="{{ $roomId ? $user.getSiropuChatActivityStatus(($user.user_id ? $roomId : null)) : (($user AND $user.isOnline()) ? 'active' : 'idle') }}" title="{{ phrase('last_activity')|for_attr }}: {{ $roomId ? date_time($user.user_id ? $user.siropu_chat_rooms.{$roomId} : $user->siropu_chat_last_activity) : (($user AND $user.canViewOnlineStatus()) ? date_time($user.last_activity) : phrase('n_a')) }}"></span>
+</xf:macro>]]></template>
+  <template type="public" title="siropu_chat_widget.less" version_id="2000032" version_string="2.0.0 Beta 2"><![CDATA[.siropuChatWidget ul
+{
+	padding: 0;
+	margin: 0;
+	list-style-type: none;
+	max-height: 325px;
+	overflow: auto;
+
+	> li
+	{
+		margin-bottom: 5px;
+
+		&:last-child
+		{
+			margin-bottom: 0;
+		}
+	}
+}
+.siropuChatWidgetRooms > ul
+{
+	> li
+	{
+		position: relative;
+		padding: 5px 10px;
+		margin: 0;
+		border-bottom: 1px solid #eee;
+		cursor: pointer;
+
+		&:first-child
+		{
+			border-top: 1px solid #eee;
+		}
+		&:hover
+		{
+			background: #f7f7f7;
+		}
+		> span
+		{
+			float: right;
+			font-weight: bold;
+			position: absolute;
+    		right: 10px;
+		}
+		&.siropuChatActiveRoom > span
+		{
+			color: green;
+		}
+		&.siropuChatInactiveRoom > span
+		{
+			color: lightgrey;
+		}
+		> a
+		{
+			display: none;
+			position: absolute;
+			right: 10px;
+    		top: 0
+		}
+		ul
+		{
+			display: none;
+			margin-top: 10px;
+		}
+	}
+}
+.siropuChatWidgetGrid
+{
+	> li
+	{
+		display: inline-block;
+		margin-right: 1px;
+		margin-top: 1px;
+
+		&:last-child
+		{
+			margin-right: 0;
+		}
+	}
+}
+.siropuChatFindItem
+{
+	margin-bottom: 10px;
+}
+.siropuChatUserMessageCount
+{
+	font-weight: bold;
+	color: @xf-textColorMuted;
+	float: right;
+}
+.siropuChatWidgetUsers
+{
+	max-height: 300px;
+	overflow: auto;
+}
+{{ include('siropu_chat_activity_status.less') }}]]></template>
+  <template type="public" title="siropu_chat_widget_rooms" version_id="2000033" version_string="2.0.0 Beta 3"><![CDATA[<xf:css src="siropu_chat_widget.less" />
+
+<xf:js src="siropu/chat/widget.js" />
+
+<div class="block">
+	<div class="block-container">
+		<h3 class="block-minorHeader">{{ phrase('siropu_chat_widget_rooms') }}</h3>
+		<div class="block-body siropuChatWidget siropuChatWidgetRooms">
+			<xf:if is="$options.search AND count($rooms) >= $options.search">
+				<div class="block-row">
+					<input type="search" class="input siropuChatFindItem" autocomplete="off" placeholder="{{ phrase('siropu_chat_find_room') }}" data-xf-init="siropu-chat-find-item">
+				</div>
+			</xf:if>
+			<ul>
+				<xf:foreach loop="$rooms" value="$room">
+					<xf:set var="$userCount" value="{{ count($users.{$room.room_id})|number }}" />
+					<li class="siropuChat{{ $userCount ? 'Active' : 'Inactive' }}Room" data-id="{$room.room_id}" data-name="{$room.room_name|for_attr}" data-xf-init="siropu-chat-widget-room">
+						{$room.room_name} {{ $room.isJoined() ? '&#10004;' : '' }}
+						<span>{$userCount} <i class="fa fa-users" aria-hidden="true"></i></span>
+						<xf:if is="$xf.visitor.user_id">
+							<xf:if is="$room.canJoin() AND !$room.isJoined()">
+								<a href="{{ link('chat/room', $room) }}" class="button" title="{{ phrase('siropu_chat_room_join') }}" data-action="join"><i class="fa fa-sign-in" aria-hidden="true"></i></a>
+							</xf:if>
+							<xf:if is="$room.isJoined()">
+								<a href="{{ link('chat/room/leave', $room) }}" class="button button--cta" title="{{ phrase('siropu_chat_room_leave') }}" data-action="leave"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+							</xf:if>
+						</xf:if>
+						<xf:if is="$userCount">
+							<ul>
+								<xf:foreach loop="{$users.{$room.room_id}}" value="$user">
+									<li data-user-id="{$user.user_id}">
+										<xf:if is="$user.user_id">
+											<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+											<xf:username user="$user" defaultname="{{ phrase('unknown') }}" rich="true" />
+										<xf:else />
+											<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('guest') }}" itemprop="image" href="" />
+											<xf:macro template="siropu_chat_guest_macros" name="username" arg-user="{$user}" />
+										</xf:if>
+										<xf:macro template="siropu_chat_user_macros" name="activity_status" arg-user="{$user}" arg-roomId="{$room.room_id}" />
+									</li>
+								</xf:foreach>
+							</ul>
+						</xf:if>
+					</li>
+				</xf:foreach>
+			</ul>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_widget_top_chatters" version_id="200010" version_string="2.0.0"><![CDATA[<xf:css src="siropu_chat_widget.less" />
+
+<div class="block">
+	<div class="block-container">
+		<h3 class="block-minorHeader">{{ phrase('siropu_chat_widget_top_chatters') }}</h3>
+		<div class="block-body block-row siropuChatWidget{{ $options.grid ? ' siropuChatWidgetGrid' : '' }} siropuChatWidgetTopChatters">
+			<ul>
+				<xf:if is="{{ count($users) }}">
+					<xf:foreach loop="$users" value="$user">
+						<li title="{$user.siropu_chat_message_count} {{ phrase('messages') }}">
+							<xf:if is="$options.grid">
+								<xf:avatar user="$user" size="xs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+							<xf:else />
+								<xf:if is="$options.avatar">
+									<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+								</xf:if>
+								<xf:username user="$user" defaultname="{{ phrase('unknown') }}" rich="true" />
+								<span class="siropuChatUserMessageCount">{$user.siropu_chat_message_count}</span>
+							</xf:if>
+						</li>
+					</xf:foreach>
+				<xf:else />
+					<li>{{ phrase('siropu_chat_widget_no_top_chatters') }}</li>
+				</xf:if>
+			</ul>
+		</div>
+	</div>
+</div>]]></template>
+  <template type="public" title="siropu_chat_widget_users" version_id="200010" version_string="2.0.0"><![CDATA[<xf:css src="siropu_chat_widget.less" />
+
+<div class="block">
+	<div class="block-container">
+		<h3 class="block-minorHeader">{{ phrase('siropu_chat_widget_users') }}</h3>
+		<div class="block-body block-row siropuChatWidget siropuChatWidgetUsers{{ $options.grid ? ' siropuChatWidgetGrid' : '' }}">
+			<xf:if is="$options.search AND count($users) >= $options.search">
+				<xf:js src="siropu/chat/widget.min.js" />
+				<input type="search" class="input siropuChatFindItem" autocomplete="off" placeholder="{{ phrase('siropu_chat_find_user') }}" data-xf-init="siropu-chat-find-item">
+			</xf:if>
+			<ul>
+				<xf:if is="{{ count($users) }}">
+					<xf:foreach loop="$users" value="$user">
+						<li data-name="{$user.username|for_attr}" title="{{ phrase('last_activity')|for_attr }}: {{ date_time($user.siropu_chat_last_activity) }}">
+							<xf:if is="$options.grid">
+								<xf:avatar user="$user" size="xs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+							<xf:else />
+								<xf:if is="$options.avatar">
+									<xf:avatar user="$user" size="xxs" defaultname="{{ phrase('unknown') }}" itemprop="image" />
+								</xf:if>
+								<xf:username user="$user" defaultname="{{ phrase('unknown') }}" rich="true" />
+								<xf:macro template="siropu_chat_user_macros" name="activity_status" arg-user="{$user}" arg-roomId="{{ null }}" />
+							</xf:if>
+						</li>
+					</xf:foreach>
+				<xf:else />
+					<li>{{ phrase('siropu_chat_no_one_is_chatting') }}</li>
+				</xf:if>
+			</ul>
+		</div>
+		<xf:if is="count($users) >= 10">
+			<div class="block-footer">
+				<span class="block-footer-counter">{{ phrase('total') }}: {{ count($users) }}</span>
+			</div>
+		</xf:if>
+	</div>
+</div>]]></template>
+  <template type="admin" title="widget_def_options_siropu_chat" version_id="200010" version_string="2.0.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[message_display_limit]" label="{{ phrase('siropu_chat_message_display_limit') }}" explain="{{ phrase('siropu_chat_message_display_limit_explain') }}" value="{$options.message_display_limit}" min="1" />
+
+<hr class="formRowSep" />
+
+<xf:checkboxrow label="{{ phrase('siropu_chat_devices') }}" explain="{{ phrase('siropu_chat_devices_explain') }}">
+	<xf:option name="options[device][desktop]" selected="{$options.device.desktop}">{{ phrase('siropu_chat_device_desktop') }}</xf:option>
+	<xf:option name="options[device][tablet]" selected="{$options.device.tablet}">{{ phrase('siropu_chat_device_tablet') }}</xf:option>
+	<xf:option name="options[device][mobile]" selected="{$options.device.mobile}">{{ phrase('siropu_chat_device_mobile') }}</xf:option>
+</xf:checkboxrow>
+
+<hr class="formRowSep" />
+
+<xf:checkboxrow label="{{ phrase('siropu_chat_enable_on_selected_days') }}" explain="{{ phrase('siropu_chat_enable_on_selected_days_explain') }}">
+	<xf:option name="options[days][0]" selected="{$options.days.0}">{{ phrase('day_sunday') }}</xf:option>
+	<xf:option name="options[days][1]" selected="{$options.days.1}">{{ phrase('day_monday') }}</xf:option>
+	<xf:option name="options[days][2]" selected="{$options.days.2}">{{ phrase('day_tuesday') }}</xf:option>
+	<xf:option name="options[days][3]" selected="{$options.days.3}">{{ phrase('day_wednesday') }}</xf:option>
+	<xf:option name="options[days][4]" selected="{$options.days.4}">{{ phrase('day_thursday') }}</xf:option>
+	<xf:option name="options[days][5]" selected="{$options.days.5}">{{ phrase('day_friday') }}</xf:option>
+	<xf:option name="options[days][6]" selected="{$options.days.6}">{{ phrase('day_saturday') }}</xf:option>
+</xf:checkboxrow>
+
+<xf:selectrow name="options[hours]" value="{$options.hours|raw}" multiple="true" size="8" style="width: 200px" label="{{ phrase('siropu_chat_enable_at_selected_hours') }}" explain="{{ phrase('siropu_chat_enable_at_selected_hours_explain') }}">
+	<xf:option value="0">0 {{ phrase('(midnight)') }}</xf:option>
+	<xf:option value="1">1</xf:option>
+	<xf:option value="2">2</xf:option>
+	<xf:option value="3">3</xf:option>
+	<xf:option value="4">4</xf:option>
+	<xf:option value="5">5</xf:option>
+	<xf:option value="6">6</xf:option>
+	<xf:option value="7">7</xf:option>
+	<xf:option value="8">8</xf:option>
+	<xf:option value="9">9</xf:option>
+	<xf:option value="10">10</xf:option>
+	<xf:option value="11">11</xf:option>
+	<xf:option value="12">12 {{ phrase('(noon)') }}</xf:option>
+	<xf:option value="13">13</xf:option>
+	<xf:option value="14">14</xf:option>
+	<xf:option value="15">15</xf:option>
+	<xf:option value="16">16</xf:option>
+	<xf:option value="17">17</xf:option>
+	<xf:option value="18">18</xf:option>
+	<xf:option value="19">19</xf:option>
+	<xf:option value="20">20</xf:option>
+	<xf:option value="21">21</xf:option>
+	<xf:option value="22">22</xf:option>
+	<xf:option value="23">23</xf:option>
+</xf:selectrow>
+
+<xf:textboxrow name="options[message]" value="{$options.message}" label="{{ phrase('siropu_chat_unavailable_message') }}" explain="{{ phrase('siropu_chat_unavailable_message_explain') }}" />]]></template>
+  <template type="admin" title="widget_def_options_siropu_chat_rooms" version_id="200010" version_string="2.0.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[search]" value="{$options.search}" min="0"
+	label="{{ phrase('siropu_chat_enable_search') }}"
+	explain="{{ phrase('siropu_chat_enable_search_explain') }}" />]]></template>
+  <template type="admin" title="widget_def_options_siropu_chat_top_chatters" version_id="1" version_string="2.0.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[limit]" value="{{ $options.limit ? $options.limit : 5 }}" min="3"
+	label="{{ phrase('siropu_chat_top_chatters_limit') }}"
+	explain="{{ phrase('siropu_chat_top_chatters_limit_explain') }}" />
+
+<xf:checkboxrow>
+	<xf:option name="options[avatar]" selected="$options.avatar">{{ phrase('siropu_chat_display_avatar') }}</xf:option>
+	<xf:explain>{{ phrase('siropu_chat_display_avatar_explain') }}</xf:explain>
+</xf:checkboxrow>
+
+<xf:checkboxrow>
+	<xf:option name="options[grid]" selected="$options.grid">{{ phrase('siropu_chat_enable_grid_mode') }}</xf:option>
+	<xf:explain>{{ phrase('siropu_chat_enable_grid_mode_explain') }}</xf:explain>
+</xf:checkboxrow>]]></template>
+  <template type="admin" title="widget_def_options_siropu_chat_users" version_id="200010" version_string="2.0.0"><![CDATA[<hr class="formRowSep" />
+
+<xf:numberboxrow name="options[search]" value="{$options.search}" min="0"
+	label="{{ phrase('siropu_chat_enable_search') }}"
+	explain="{{ phrase('siropu_chat_enable_search_explain') }}" />
+
+<xf:checkboxrow>
+	<xf:option name="options[avatar]" selected="$options.avatar">{{ phrase('siropu_chat_display_avatar') }}</xf:option>
+	<xf:explain>{{ phrase('siropu_chat_display_avatar_explain') }}</xf:explain>
+</xf:checkboxrow>
+
+<xf:checkboxrow>
+	<xf:option name="options[grid]" selected="$options.grid">{{ phrase('siropu_chat_enable_grid_mode') }}</xf:option>
+	<xf:explain>{{ phrase('siropu_chat_enable_grid_mode_explain') }}</xf:explain>
+</xf:checkboxrow>]]></template>
+</templates>

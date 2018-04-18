@@ -1,0 +1,1354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+  <template type="public" title="DC_ELF_loginForm" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="{$xf.options.DC_ELF_loginForm_type} == 'animated'">
+	
+	<!-- Animated Login Form -->
+	<xf:include template="DC_ELF_loginForm_animated" />
+	
+<xf:elseif is="{$xf.options.DC_ELF_loginForm_type} == 'material'"/>
+	
+	<!-- Material Login Form -->
+	<xf:include template="DC_ELF_loginForm_material" />
+	
+<xf:elseif is="{$xf.options.DC_ELF_loginForm_type} == 'flat'"/>
+	
+	<!-- Flat Login Form -->
+	<xf:include template="DC_ELF_loginForm_flat" />
+	
+<xf:elseif is="{$xf.options.DC_ELF_loginForm_type} == 'gradient'"/>
+	
+	<!-- Gradient Login Form -->
+	<xf:include template="DC_ELF_loginForm_gradient" />
+	
+<xf:elseif is="{$xf.options.DC_ELF_loginForm_type} == 'purecss3'"/>
+	
+	<!-- Pure CSS3 Login Form -->
+	<xf:include template="DC_ELF_loginForm_purecss3" />
+	
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_loginForm.less" version_id="1010000" version_string="1.0.1"><![CDATA[body
+{
+	.DC-socialLoginWrapper
+	{
+		padding: 15px 10px;
+	}
+	
+	.DC-loginForm--mask 
+	{
+		position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, .5);
+		z-index: 999998;
+		transition: all .3s cubic-bezier(0.22, 0.61, 0.36, 1);
+		opacity: 0;
+		visibility: hidden;
+	}
+	
+	.DC-loginForm 
+	{
+		display: none;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		width: 90%;
+		max-width: 600px;
+		background: #fff;
+		transition: all .3s cubic-bezier(0.22, 0.61, 0.36, 1);
+		opacity: 0;
+		z-index: 999999;
+		
+		.DC-loginForm--close 
+		{
+			font-size: 18px;
+			position: absolute;
+			top: 70px;
+			right: 10px;
+			z-index: 2;
+		}
+		
+		.DC-loginForm--withSocials
+		{
+			text-align: center;
+			height: 60px;
+			background-image: url({$xf.options.boardUrl}/styles/DC/EnhancedLoginForm/social_network.jpg);
+			background-size: cover;
+			background-position: center;
+	
+			.DC-loginWithSocial--button
+			{
+				display: flex !important;
+				color: #fff !important;
+				font-size: larger;
+				font-weight: 600 !important;
+				padding: 0 10px;
+				height: 100%;
+				width: 100%;
+				justify-content: center;
+				align-items: center;
+				text-decoration: none;
+				
+				&::before
+				{
+					content:"\f1e0";
+					font-family: FontAwesome;
+					padding-right: 10px;
+				}
+			}
+		}
+	}
+	
+	&.DC-loginForm--show
+	{
+		.DC-loginForm--mask
+		{
+			opacity: 1;
+			visibility: visible;
+		}
+		
+		.DC-loginForm
+		{
+			opacity: 1;
+			filter: blur(0);
+  			-webkit-filter: blur(0);
+			transform: translate3d(0,0,0);
+		}
+	}
+}
+
+// Animated Login Form
+	body.DC_animated_login .DC-loginForm
+	{
+		max-width: 320px;
+	}
+
+	.DC-login-animated 
+	{
+		border-radius: 2px 2px 5px 5px;
+		padding: 10px 20px 20px 20px;
+		background: #ffffff;
+		position: relative;
+		padding-bottom: 80px;
+		box-shadow: 0px 1px 5px rgba(0,0,0,0.3);
+	  
+		&.loading 
+		{
+			button 
+			{
+				max-height: 100%;
+				padding-top: 50px;
+			  
+				.spinner 
+				{
+					opacity: 1;
+					top: 40%;
+				}
+			}  
+		}
+	  
+		&.ok 
+		{
+			button 
+			{
+				background-color: #8bc34a !important;
+				z-index: 3;
+			
+				.spinner
+				{
+					border-radius: 0;
+					border-top-color: transparent;
+					border-right-color: transparent;
+					height: 20px;
+					animation: none;
+					transform: rotateZ(-45deg);
+				}
+			}
+		}
+	  
+		input 
+		{
+			display: block;
+			padding: 15px 10px;
+			margin-bottom: 10px;
+			width: 100%;
+			border: 1px solid #ddd;
+			transition: border-width 0.2s ease;
+			border-radius: 2px;
+		
+			&+ i.fa 
+			{
+				color: #fff;
+				font-size: 1em;
+				position: absolute;
+				margin-top: -47px;
+				opacity: 0;
+				left: 0;
+				transition: all 0.1s ease-in;
+			}
+			
+			&:focus 
+			{
+				&+ i.fa 
+				{
+					opacity: 1;
+					left: 30px;
+					transition: all 0.25s ease-out;
+				}
+			
+				outline: none;
+				color: #444;
+				border-color: #2196F3;
+				border-left-width: 35px;
+			}
+		}
+	  
+		a 
+		{
+			font-size: 0.8em;   
+			color: #2196F3;
+			text-decoration: none;
+		}
+	  
+		.title 
+		{
+			color: #444;
+			font-size: 1.2em;
+			font-weight: bold;
+			margin: 10px 0 30px 0;
+			border-bottom: 1px solid #eee;
+			padding-bottom: 20px;
+		}
+	  
+		button 
+		{
+			width: 100%;
+			height: 100%;
+			padding: 10px 10px;
+			background: #2196F3;
+			color: #fff;
+			display: block;
+			border: none;
+			margin-top: 20px;
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			max-height: 60px;
+			border: 0px solid rgba(0,0,0,0.1);
+			border-radius: 0 0 2px 2px;
+			transform: rotateZ(0deg);
+			transition: all 0.1s ease-out;
+			border-bottom-width: 7px;
+		
+			.spinner 
+			{
+				display: block;
+				width: 40px;
+				height: 40px;
+				position: absolute;
+				border: 4px solid #ffffff;
+				border-top-color: rgba(255,255,255,0.3);
+				border-radius: 100%;
+				left: 50%;
+				top: 0;
+				opacity: 0;
+				margin-left: -20px;
+				margin-top: -20px;
+				animation: spinner 0.6s infinite linear;
+				transition: top 0.3s 0.3s ease, opacity 0.3s 0.3s ease, border-radius 0.3s ease;
+				box-shadow: 0px 1px 0px rgba(0,0,0,0.2);
+			}
+		}
+	  
+		&:not(.loading) button:hover 
+		{
+			box-shadow: 0px 1px 3px #2196F3;
+		}
+			
+		&:not(.loading) button:focus 
+		{
+			border-bottom-width: 4px;
+		}
+	}
+
+	@keyframes spinner {
+	  0% { transform: rotateZ(0deg); }
+	  100% { transform: rotateZ(359deg); }
+	}
+
+// Material Login Form
+	body.DC_material_login .DC-loginForm .DC-loginForm--close	
+	{
+		z-index: 10;
+		color: #ed2553;
+		font-size: 32px;
+	}
+
+	.DC-loginForm--material
+	{
+		.box {
+		   position: relative;
+		   top: 0;
+		   opacity: 1;
+		   float: left;
+		   padding: 60px 50px 40px 50px;
+		   width: 100%;
+		   background: #fff;
+		   border-radius: 10px;
+		   transform: scale(1);
+		   -webkit-transform: scale(1);
+		   -ms-transform: scale(1);
+		   z-index: 5;
+		}
+
+		.box.back {
+		   transform: scale(.95);
+		   -webkit-transform: scale(.95);
+		   -ms-transform: scale(.95);
+		   top: -20px;
+		   opacity: .8;
+		   z-index: -1;
+		}
+
+		.box:before {
+		   content: "";
+		   width: 100%;
+		   height: 30px;
+		   border-radius: 10px;
+		   position: absolute;
+		   top: -10px;
+		   background: rgba(255, 255, 255, .6);
+		   left: 0;
+		   transform: scale(.95);
+		   -webkit-transform: scale(.95);
+		   -ms-transform: scale(.95);
+		   z-index: -1;
+		}
+
+		.title {
+		   width: 100%;
+		   float: left;
+		   line-height: 46px;
+		   font-size: 34px;
+		   font-weight: 700;
+		   letter-spacing: 2px;
+		   color: #ED2553;
+		   position: relative;
+		}
+
+		.title:before {
+		   content: "";
+		   width: 5px;
+		   height: 100%;
+		   position: absolute;
+		   top: 0;
+		   left: -50px;
+		   background: #ED2553;
+		}
+
+		.input, .input label, .input input, .input .spin, .button, .button button .button.login button i.fa, .material-button .shape:before, .material-button .shape:after, .button.login button {
+		   transition: 300ms cubic-bezier(.4, 0, .2, 1);
+		   -webkit-transition: 300ms cubic-bezier(.4, 0, .2, 1);
+		   -ms-transition: 300ms cubic-bezier(.4, 0, .2, 1);
+		}
+
+		.material-button, .alt-2, .material-button .shape, .alt-2 .shape, .box {
+		   transition: 400ms cubic-bezier(.4, 0, .2, 1);
+		   -webkit-transition: 400ms cubic-bezier(.4, 0, .2, 1);
+		   -ms-transition: 400ms cubic-bezier(.4, 0, .2, 1);
+		}
+
+		.input, .input label, .input input, .input .spin, .button, .button button {
+		   width: 100%;
+		   float: left;
+		}
+
+		.input, .button {
+		   margin-top: 30px;
+		   height: 70px;
+		}
+
+		.input, .input input, .button, .button button {
+		   position: relative;
+		}
+
+		.input {
+			background-color: transparent;
+			border: 0;
+		}
+		
+		.input input {
+		   height: 60px;
+		   top: 10px;
+		   border: none;
+		   background: transparent;
+		}
+
+		.input input, .input label, .button button {
+		   font-family: 'Roboto', sans-serif;
+		   font-size: 24px;
+		   color: rgba(0, 0, 0, 0.8);
+		   font-weight: 300;
+		   z-index: 2;
+		}
+
+		.input:before, .input .spin {
+		   width: 100%;
+		   height: 1px;
+		   position: absolute;
+		   bottom: 0;
+		   left: 0;
+		}
+
+		.input:before {
+		   content: "";
+		   background: rgba(0, 0, 0, 0.1);
+		   z-index: 3;
+		}
+
+		.input .spin {
+		   background: #ED2553;
+		   z-index: 4;
+		   width: 0;
+		}
+
+		.input label {
+		   position: absolute;
+		   top: 10px;
+		   left: 0;
+		   z-index: 2;
+		   cursor: pointer;
+		   line-height: 60px;
+		}
+
+		.button.login {
+		   width: 60%;
+		   left: 20%;
+		}
+		
+		.button
+		{
+			background-color: transparent !important;
+			box-shadow: none;
+			border: 0;
+			height: auto;
+		}
+		
+		.button.login button, .button button {
+		   width: 100%;
+		   line-height: 64px;
+		   left: 0%;
+		   background-color: transparent;
+		   border: 3px solid rgba(0, 0, 0, 0.1);
+		   font-weight: 900;
+		   font-size: 18px;
+		   color: rgba(0, 0, 0, 0.2);
+		}
+
+		.button.login {
+		   margin-top: 30px;
+		}
+
+		.button {
+		   margin-top: 20px;
+		}
+
+		.button button {
+		   background-color: #fff;
+		   color: #ED2553;
+		   border: none;
+		}
+
+		.button.login button.active {
+		   border: 3px solid transparent;
+		   color: #fff !important;
+		}
+
+		.button.login button.active span {
+		   opacity: 0;
+		   transform: scale(0);
+		   -webkit-transform: scale(0);
+		   -ms-transform: scale(0);
+		}
+
+		.button.login button.active i.fa {
+		   opacity: 1;
+		   transform: scale(1) rotate(-0deg);
+		   -webkit-transform: scale(1) rotate(-0deg);
+		   -ms-transform: scale(1) rotate(-0deg);
+		}
+
+		.button.login button i.fa {
+		   width: 100%;
+		   height: 100%;
+		   position: absolute;
+		   top: 0;
+		   left: 0;
+		   line-height: 60px;
+		   transform: scale(0) rotate(-45deg);
+		   -webkit-transform: scale(0) rotate(-45deg);
+		   -ms-transform: scale(0) rotate(-45deg);
+		}
+
+		.button.login button:hover {
+		   color: #ED2553;
+		   border-color: #ED2553;
+		}
+
+		.button {
+		   margin: 40px 0;
+		   overflow: hidden;
+		   z-index: 2;
+		}
+
+		.button button {
+		   cursor: pointer;
+		   position: relative;
+		   z-index: 2;
+		}
+
+		.pass-forgot {
+		   width: 100%;
+		   float: left;
+		   text-align: center;
+		   color: rgba(0, 0, 0, 0.4);
+		   font-size: 18px;
+		}
+
+		.click-efect {
+		   position: absolute;
+		   top: 0;
+		   left: 0;
+		   background: #ED2553;
+		   border-radius: 50%;
+		}
+
+		.material-button, .alt-2 {
+		   width: 140px;
+		   height: 140px;
+		   border-radius: 50%;
+		   background: #ED2553;
+		   position: absolute;
+		   top: 40px;
+		   right: -70px;
+		   cursor: pointer;
+		   z-index: 100;
+		   transform: translate(0%, 0%);
+		   -webkit-transform: translate(0%, 0%);
+		   -ms-transform: translate(0%, 0%);
+		}
+
+		.material-button .shape, .alt-2 .shape {
+		   position: absolute;
+		   top: 0;
+		   right: 0;
+		   width: 100%;
+		   height: 100%;
+		}
+
+		.material-button .shape:before, .alt-2 .shape:before, .material-button .shape:after, .alt-2 .shape:after {
+		   content: "";
+		   background: #fff;
+		   position: absolute;
+		   top: 50%;
+		   left: 50%;
+		   transform: translate(-50%, -50%) rotate(360deg);
+		   -webkit-transform: translate(-50%, -50%) rotate(360deg);
+		   -ms-transform: translate(-50%, -50%) rotate(360deg);
+		}
+
+		.material-button .shape:before, .alt-2 .shape:before {
+		   width: 25px;
+		   height: 4px;
+		}
+
+		.material-button .shape:after, .alt-2 .shape:after {
+		   height: 25px;
+		   width: 4px;
+		}
+
+		.material-button.active, .alt-2.active {
+		   top: 50%;
+		   right: 50%;
+		   transform: translate(50%, -50%) rotate(0deg);
+		   -webkit-transform: translate(50%, -50%) rotate(0deg);
+		   -ms-transform: translate(50%, -50%) rotate(0deg);
+		}
+
+		.materialContainer {
+		   width: 100%;
+		   max-width: 460px;
+		   position: absolute;
+		   top: 50%;
+		   left: 50%;
+		   transform: translate(-50%, -50%);
+		   -webkit-transform: translate(-50%, -50%);
+		   -ms-transform: translate(-50%, -50%);
+		}
+	}
+
+// Flat Login Form
+	body.DC_flat_login .DC-loginForm
+	{
+		max-width: 300px;
+		
+		.DC-loginForm--close
+		{
+			z-index: 10;
+			color: #fff;
+		}
+	}
+
+	.DC-login-flat
+	{
+		position: relative;
+		width: 100%;
+		background: #f6f6f6;
+		overflow: hidden;
+		box-shadow: 0px 0px 50px 2px #aaa;
+		
+		.banner
+		{
+			width: 100%;
+			height: 210px;
+			background: linear-gradient(rgba(0,0,0,0.3),rgba(0,0,0,0.4)),url({$xf.options.DC_ELF_loginForm_flat_background}) center no-repeat;
+			background-size: cover;
+			transform: skew(0deg,-8deg) translateY(-25px);
+			z-index: 2;
+		}
+		
+		.form
+		{
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			background: #f6f6f6;
+			width: 100%;
+			
+			.wrapper
+			{
+				width: 85%;
+				
+				.row
+				{
+					margin: 20px 0px;
+					
+					.label
+					{
+						font-size: 12px;
+						font-weight: 600;
+						color: rgb(100,100,100);
+					}
+					
+					input
+					{
+						margin-top: 2px;
+						font-size: 13px;
+						color: rgb(70,70,70);
+						border: none;
+						border-bottom: 2px solid rgba(100,100,100,0.6);
+						outline: none;
+						height: 25px;
+						background: transparent;
+						width: 100%;
+						transition: border .2s linear;
+						
+						&:focus
+						{
+							border-color: rgb(254, 90, 95);
+						}
+					}
+					
+					button
+					{
+						margin-top: 0px;
+						font-size: 13px;
+						color: rgb(100,100,100);
+						border: none;
+						outline: none;
+						height: 40px;
+						text-transform: uppercase;
+						background: rgba(255, 60, 65, 0.84);
+						width: 100%;
+						color: #fff;
+						cursor: pointer;
+					}
+					
+					.DC-loginForm--toggle
+					{
+						display: block;
+						color: rgb(70,70,70);
+						font-size: 12px;
+						margin-top: 10px;
+					}
+				}
+			}
+			
+			.signup
+			{
+				text-align: center;
+				width: 100%;
+				font-size: 13px;
+				margin-bottom: 15px;
+				color: #333;
+				
+				a
+				{
+					color: rgba(255, 60, 65, 0.84);
+					text-decoration: none;
+					font-weight: 600;
+				}
+			}
+		}
+	}
+
+// Gradient Login Form
+	body.DC_gradient_login .DC-loginForm
+	{
+		.DC-loginForm--close
+		{
+			color: #fff;
+		}
+	}
+
+	.DC-login-gradient
+	{
+		a
+		{
+			color: #fff;
+			text-decoration: none;
+		}
+		
+		.container
+		{
+			background: #d7d7d7 url('{$xf.options.DC_ELF_loginForm_gradient_background}') no-repeat center center;
+			background-size: cover;
+			display: block;
+			position: relative;
+			margin: 0 auto;
+			box-shadow: 1px 5px 10px 1px #333;
+			overflow: hidden;
+			
+			.menu-login
+			{
+				position: relative;
+				padding: 10% 0 5%;
+				text-align: center;
+				
+				.btn
+				{
+					h2
+					{
+						display: inline;
+						color: #fff;
+						margin: 20px;
+						padding-bottom: 3px;
+						border-bottom: 3px solid;
+					}
+					
+					&.btn-enregistrer
+					{
+						h2
+						{
+							color: #fb8c8c;
+						}
+					}
+				}
+			}
+			
+			.connexion
+			{
+				padding: 5% 10% 5%;
+				width: 100%;
+				
+				.contact-form
+				{
+					label
+					{
+						position: relative;
+						display: block;
+						margin-top: 10px;
+						padding: 5px 10px;
+						font-size: 15px;
+						font-weight: 600;
+						color: #fff;
+					}
+					
+					input
+					{
+						display: block;
+						width: 100%;
+						margin: auto;
+						padding: 13px;
+						border: 0;
+						border-radius: 20px;
+						background: rgba(255, 255, 255, 0.15);
+						color: rgba(0, 0, 0, 0.75);
+						
+						&.submit
+						{
+							width: 100%;
+    						padding: 10px;
+    						font-size: 17px;
+   						 	color: #fff;
+    						opacity: 1;
+    						background-color: #1161EE;
+    						cursor: pointer;
+						}
+					}
+					
+					.check
+					{
+						display: flex;
+						
+						label
+						{
+							width: auto;
+							margin-left: 5%;
+						
+							.checkbox
+							{
+								display: none;
+								
+								&:checked + svg .path-moving
+								{
+									-webkit-transition: stroke .4s,stroke-dasharray .4s,stroke-dashoffset .4s cubic-bezier(.3,.8,.6,1.5);
+    								transition: stroke .4s,stroke-dasharray .4s,stroke-dashoffset .4s cubic-bezier(.3,.8,.6,1.5);
+   								 	stroke-dasharray: 25 90;
+    								stroke-dashoffset: 0;
+								}
+							}
+							
+							.path-moving, .path-back
+							{
+								fill: none;
+								stroke: #1161ee;
+								stroke-width: 3px;
+								stroke-linecap: round;
+								stroke-linejoin: round;
+							}
+							
+							.path-moving
+							{
+								-webkit-transition: stroke .4s,stroke-dasharray .4s,stroke-dashoffset .4s;
+								transition: stroke .4s,stroke-dasharray .4s,stroke-dashoffset .4s;
+								stroke: #ffffff;
+								stroke-dasharray: 110;
+								stroke-dashoffset: -32;
+							}
+						}
+						
+						h3
+						{
+							font-weight: 500;
+							padding: 15px 5px;
+							margin: 0;
+							color: #fff;
+						}
+					}
+				}
+				
+				hr
+				{
+					position: relative;
+					margin-top: 10%;
+					border: 1px solid #fff;
+					border-radius: 50px;
+					opacity: 0.15;
+				}
+				
+				h4
+				{
+					margin-bottom: 0;
+					text-align: center;
+					color: #ffffff;
+					opacity: 0.3;
+				}
+			}
+		}
+	}
+
+// PureCSS3 Login Form
+	body.DC_purecss3_login .DC-loginForm
+	{
+		border-radius: 10px;
+		max-width: 450px;
+		
+		*:focus 
+		{
+    		outline: none;
+		}
+		
+		a[href]
+		{
+			text-decoration: none;
+			color: #92badd;
+			display: inline-block;
+			text-decoration: none;
+			font-weight: 400;
+			
+			&.underlineHover
+			{
+				&:after
+				{
+					display: block;
+					left: 0;
+					bottom: -10px;
+					width: 0;
+					height: 2px;
+					background-color: #56baed;
+					content: "";
+					transition: width 0.2s;
+				}
+				
+				&:hover
+				{
+					&:after
+					{
+						width: 100%;
+					}
+				}
+			}
+		}
+		
+		.DC-login-purecss3
+		{
+			border-radius: 10px;
+			background: #fff;
+			padding: 30px;
+			max-width: 450px;
+			position: relative;
+			padding: 0px;
+			-webkit-box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+			box-shadow: 0 30px 60px 0 rgba(0,0,0,0.3);
+			text-align: center;
+			
+			h2
+			{
+				text-align: center;
+				font-size: 16px;
+				font-weight: 600;
+				text-transform: uppercase;
+				display: inline-block;
+				margin: 40px 8px 10px 8px;
+				color: #cccccc;
+				
+				&.active
+				{
+					color: #0d0d0d;
+					border-bottom: 2px solid #5fbae9;
+				}
+				
+				&.inactive
+				{
+					color: #cccccc;
+					
+					&:hover
+					{
+						color: #0d0d0d;
+					}
+				}
+			}
+			
+			.fadeIn
+			{
+				#icon
+				{
+					width: 60%;
+					max-width: none;
+				}
+			}
+			
+			#formMain
+			{
+				input[type=text]
+				{
+					background-color: #f6f6f6;
+					border: none;
+					color: #0d0d0d;
+					padding: 15px 32px;
+					text-align: center;
+					text-decoration: none;
+					display: inline-block;
+					font-size: 16px;
+					margin: 5px;
+					width: 85%;
+					border: 2px solid #f6f6f6;
+					transition: all 0.5s ease-in-out;
+					border-radius: 5px;
+					
+					&:focus
+					{
+						background-color: #fff;
+  						border-bottom: 2px solid #5fbae9;
+					}
+					
+					&:placeholder
+					{
+						color: #cccccc;
+					}
+				}
+				
+				input[type=button], input[type=submit], input[type=reset]
+				{
+					background-color: #56baed;
+					border: none;
+					color: white;
+					padding: 15px 80px;
+					text-align: center;
+					text-decoration: none;
+					display: inline-block;
+					text-transform: uppercase;
+					font-size: 13px;
+					box-shadow: 0 10px 30px 0 rgba(95,186,233,0.4);
+					border-radius: 5px;
+					margin: 5px 20px 40px 20px;
+					transition: all 0.3s ease-in-out;
+					
+					&:hover
+					{
+						background-color: #39ace7;
+					}
+					
+					&:active
+					{
+						transform: scale(0.95);
+					}
+				}
+			}
+			
+			#formFooter
+			{
+				background-color: #f6f6f6;
+				border-top: 1px solid #dce8f1;
+				padding: 25px;
+				text-align: center;
+				border-radius: 0 0 10px 10px;
+			}
+		}
+	}]]></template>
+  <template type="public" title="DC_ELF_loginForm_animated" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+
+	<xf:css src="DC_ELF_loginForm.less" />
+
+	<div class="block DC-loginForm">
+		<a href="#" class="DC-loginForm--close"><i class="fa fa-times"></i></a>
+		<div class="DC-loginForm--withSocials">
+			<a href="{{ link('login') }}" class="DC-loginWithSocial--button DC-loginForm--toggle" data-xf-click="overlay">
+				{{ phrase('DC_ELF_login_using_social_account') }}
+			</a>
+		</div>
+		
+		<div class="wrapper">
+			<xf:form action="{{ link('login/login') }}" class="DC-login-animated" id="loginForm">
+				<p class="title">{{ phrase('log_in') }}</p>
+				
+				<input name="login" value="{$login}" autofocus="autofocus" autocomplete="username"
+						placeholder="{{ phrase('your_name_or_email_address') }}" />
+				
+				<i class="fa fa-user"></i> 
+				<input name="password" type="password" autocomplete="current-password"
+						placeholder="{{ phrase('password') }}" />
+				
+				<i class="fa fa-key"></i> 
+				<a href="{{ link('lost-password') }}" data-xf-click="overlay" class="DC-loginForm--toggle">{{ phrase('forgot_your_password') }}</a>
+				
+				<div style="margin-bottom:10px;"></div>
+				
+				<xf:if is="$captcha">
+					<xf:captcharow label="{{ phrase('verification') }}" force="true" />
+					<div style="margin-bottom:10px;"></div>
+				</xf:if>
+				
+				<ul class="inputChoices">
+					<li class="inputChoices-choice">
+						<label class="iconic iconic--checkbox iconic--labelled">
+							<input type="checkbox" name="remember" value="1" checked="checked">
+							<i aria-hidden="true"></i> {{ phrase('stay_logged_in') }}
+						</label>
+					</li>
+				</ul>
+				
+				<xf:button type="submit">
+					<i class="spinner"></i>
+					<span class="state">Log in</span>
+				</xf:button>
+			</xf:form>
+		</div>
+	</div>
+	
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_loginForm_flat" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+
+	<xf:css src="DC_ELF_loginForm.less" />
+	
+	<div class="block DC-loginForm">
+		<a href="#" class="DC-loginForm--close"><i class="fa fa-times"></i></a>
+		<div class="DC-loginForm--withSocials">
+			<a href="{{ link('login') }}" class="DC-loginWithSocial--button DC-loginForm--toggle" data-xf-click="overlay">
+				{{ phrase('DC_ELF_login_using_social_account') }}
+			</a>
+		</div>
+		
+		<div class="wrapper">
+			<div class="DC-login-flat">
+			  	<div class="banner"></div>
+			  	
+				<xf:form action="{{ link('login/login') }}" class="form">
+					<div class="wrapper">
+				  		<div class="row">
+							<div class="label">{{ phrase('your_name_or_email_address') }}</div>
+							<input name="login" value="" autofocus="autofocus" autocomplete="username" />
+				  		</div>
+						
+				  		<div class="row">
+							<div class="label">{{ phrase('password') }}</div>
+							<input name="password" type="password" autocomplete="current-password" />
+							
+							<a href="{{ link('lost-password') }}" data-xf-click="overlay" class="DC-loginForm--toggle">{{ phrase('forgot_your_password') }}</a>
+				  		</div>
+						
+						<ul class="inputChoices" style="display:none!important;">
+							<li class="inputChoices-choice">
+								<label class="iconic iconic--checkbox iconic--labelled">
+									<input type="checkbox" name="remember" value="1" checked="checked">
+									<i aria-hidden="true"></i> {{ phrase('stay_logged_in') }}
+								</label>
+							</li>
+						</ul>
+						
+						<xf:if is="$captcha">
+							<xf:captcharow label="{{ phrase('verification') }}" force="true" />
+						</xf:if>
+						
+				  		<div class="row">
+							<button type="submit">{{ phrase('log_in') }}</button>
+				  		</div>  
+					</div>
+					
+					<xf:if is="$xf.options.registrationSetup.enabled">
+						<div class="signup">
+				  			{{ phrase('dont_have_account_question') }} <a href="{{ link('register') }}" data-xf-click="overlay" class="DC-loginForm--toggle">{{ phrase('register_now') }}</a>
+						</div> 
+					</xf:if>
+			  	</xf:form>
+			</div>
+		</div>
+	</div>
+	
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_loginForm_gradient" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+
+	<xf:css src="DC_ELF_loginForm.less" />
+	
+	<div class="block DC-loginForm">
+		<a href="#" class="DC-loginForm--close"><i class="fa fa-times"></i></a>
+		<div class="DC-loginForm--withSocials">
+			<a href="{{ link('login') }}" class="DC-loginWithSocial--button DC-loginForm--toggle" data-xf-click="overlay">
+				{{ phrase('DC_ELF_login_using_social_account') }}
+			</a>
+		</div>
+		<div class="wrapper">
+			<div class="DC-login-gradient">
+				<xf:form action="{{ link('login/login') }}" class="container">
+						<div class="menu-login">
+							<span class="btn btn-connexion active"><h2>{{ phrase('log_in') }}</h2></span>
+							<xf:if is="$xf.options.registrationSetup.enabled">
+								<a href="{{ link('register') }}" class="btn btn-enregistrer DC-loginForm--toggle" data-xf-click="overlay"><h2>{{ phrase('register') }}</h2></a>
+							</xf:if>
+						</div>
+						<div class="connexion">
+							<div class="contact-form">
+								<label>{{ phrase('your_name_or_email_address') }}</label>
+								<input name="login" value="" autofocus="autofocus" autocomplete="username"  />
+								
+								<label>{{ phrase('password') }}</label>
+								<input name="password" type="password" autocomplete="current-password" />
+								
+								<div class="check">
+									<label>				
+										<input id="check" class="checkbox" type="checkbox" name="remember" value="1" checked="checked" />
+										<svg xmlns="http://www.w3.org/2000/svg" width="26px" height="23px">
+											<path class="path-back" d="M1.5,6.021V2.451C1.5,2.009,1.646,1.5,2.3,1.5h18.4c0.442,0,0.8,0.358,0.8,0.801v18.398c0,0.442-0.357,0.801-0.8,0.801H2.3c-0.442,0-0.8-0.358-0.8-0.801V6"></path>
+											<path class="path-moving" d="M24.192,3.813L11.818,16.188L1.5,6.021V2.451C1.5,2.009,1.646,1.5,2.3,1.5h18.4c0.442,0,0.8,0.358,0.8,0.801v18.398c0,0.442-0.357,0.801-0.8,0.801H2.3c-0.442,0-0.8-0.358-0.8-0.801V6"></path>
+										</svg>
+									</label>
+									<h3>{{ phrase('stay_logged_in') }}</h3>
+								</div>
+								
+								<xf:if is="$captcha">
+									<xf:captcharow label="{{ phrase('verification') }}" force="true" />
+								</xf:if>
+								
+								<input class="submit" value="{{ phrase('log_in') }}" type="submit">
+							</div>
+							
+							<hr>
+							<a href="{{ link('lost-password') }}" data-xf-click="overlay" class="DC-loginForm--toggle"><h4>{{ phrase('forgot_your_password') }}</h4></a>
+						</div>
+				</xf:form>
+			</div>
+		</div>
+	</div>
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_loginForm_material" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+	<xf:css src="DC_ELF_loginForm.less" />
+	
+	<div class="block DC-loginForm">
+		<a href="#" class="DC-loginForm--close"><i class="fa fa-times"></i></a>
+		<div class="DC-loginForm--withSocials">
+			<a href="{{ link('login') }}" class="DC-loginWithSocial--button DC-loginForm--toggle" data-xf-click="overlay">
+				{{ phrase('DC_ELF_login_using_social_account') }}
+			</a>
+		</div>
+		
+		<div class="wrapper">
+			<div class="DC-loginForm--material materialContainer">
+			   <xf:form action="{{ link('login/login') }}" class="box">
+				  	<div class="title">{{ phrase('log_in') }}</div>
+				   
+				  	<div class="input">
+					 	<label for="name">{{ phrase('your_name_or_email_address') }}</label>
+					 	<input name="login" value="{$login}" autofocus="autofocus" autocomplete="username" id="name" />
+					 	<span class="spin"></span>
+				  	</div>
+
+				  	<div class="input">
+					 	<label for="pass">{{ phrase('password') }}</label>
+					 	<input name="password" type="password" autocomplete="current-password" id="pass" />
+					 	<span class="spin"></span>
+				  	</div>
+				   
+				 	<ul class="inputChoices" style="display:none!important;">
+						<li class="inputChoices-choice">
+							<label class="iconic iconic--checkbox iconic--labelled">
+								<input type="checkbox" name="remember" value="1" checked="checked">
+								<i aria-hidden="true"></i> {{ phrase('stay_logged_in') }}
+							</label>
+						</li>
+					</ul>
+
+				  	<div class="button login">
+					 	<button type="submit"><span>GO</span> <i class="fa fa-check"></i></button>
+				  	</div>
+
+				  	<a href="{{ link('lost-password') }}" data-xf-click="overlay" class="pass-forgot DC-loginForm--toggle">{{ phrase('forgot_your_password') }}</a>
+
+			   </xf:form>
+			</div>
+		</div>
+	</div>
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_loginForm_purecss3" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+
+	<xf:css src="DC_ELF_loginForm.less" />
+
+	<div class="block DC-loginForm">
+		<a href="#" class="DC-loginForm--close"><i class="fa fa-times"></i></a>
+		<div class="DC-loginForm--withSocials">
+			<a href="{{ link('login') }}" class="DC-loginWithSocial--button DC-loginForm--toggle" data-xf-click="overlay">
+				{{ phrase('DC_ELF_login_using_social_account') }}
+			</a>
+		</div>
+		
+		<div class="wrapper">
+			<xf:form action="{{ link('login/login') }}" class="DC-login-purecss3">
+				<!-- Tabs Titles -->
+				<h2 class="active">{{ phrase('log_in') }}</h2>
+				<xf:if is="$xf.options.registrationSetup.enabled">
+					<a href="{{ link('register') }}" class="DC-loginForm--toggle" data-xf-click="overlay"><h2 class="inactive underlineHover">{{ phrase('register') }}</h2></a>
+				</xf:if>
+				
+				<!-- Icon -->
+				<div class="fadeIn first">
+					<img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon">
+				</div>
+
+				<!-- Login Form -->
+				<div id="formMain">
+					<input type="text" id="login" class="fadeIn second" name="login" placeholder="{{ phrase('your_name_or_email_address') }}" autofocus="autofocus" autocomplete="username" />
+					<input type="text" id="password" class="fadeIn third" name="login" placeholder="{{ phrase('password') }}" type="password" autocomplete="current-password" />
+					<input type="submit" class="fadeIn fourth" value="{{ phrase('log_in') }}">
+				</div>
+				
+				<ul class="inputChoices" style="display:none!important">
+					<li class="inputChoices-choice">
+						<label class="iconic iconic--checkbox iconic--labelled">
+							<input type="checkbox" name="remember" value="1" checked="checked">
+							<i aria-hidden="true"></i> {{ phrase('stay_logged_in') }}
+						</label>
+					</li>
+				</ul>
+
+				<!-- Remind Passowrd -->
+				<div id="formFooter">
+					<a class="underlineHover DC-loginForm--toggle" href="{{ link('lost-password') }}" data-xf-click="overlay">{{ phrase('forgot_your_password') }}</a>
+				</div>
+
+			</xf:form>
+		</div>
+	</div>
+</xf:if>]]></template>
+  <template type="public" title="DC_ELF_script.js" version_id="1000000" version_string="1.0.0"><![CDATA[<xf:if is="!$xf.visitor.user_id">
+	<xf:if is="$xf.options.DC_ELF_loginForm_type == 'default'">
+	<xf:else/>
+		<script type="text/javascript">
+		$(document).ready(function () {
+			
+			<xf:if is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'animated'">
+				$('body').addClass('DC_animated_login');
+			<xf:elseif is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'material'"/>
+				$('body').addClass('DC_material_login');
+			<xf:elseif is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'flat'"/>
+				$('body').addClass('DC_flat_login');
+			<xf:elseif is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'gradient'"/>
+				$('body').addClass('DC_gradient_login');
+			<xf:elseif is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'purecss3'"/>
+				$('body').addClass('DC_purecss3_login');
+			</xf:if>
+			
+			<xf:if is="!$xf.options.DC_ELF_loginForm_social">
+				$('.DC-loginForm--withSocials').remove();
+				$('.DC-loginForm--close').css('top','10px');
+			</xf:if>
+			
+			jQuery.fn.center = function () {
+    			this.css("position","absolute");
+    			this.css("top", ( $(window).height() - this.height() ) / 2+$(window).scrollTop() + "px");
+				this.css("left", ( $(window).width() - this.width() ) / 2+$(window).scrollLeft() + "px");
+    			return this;
+			}
+			
+			$(window).resize(function (){
+				$('.DC-loginForm').center();
+			});
+			
+			$('.DC-loginForm').center();
+			
+			$('body').append('<div class="DC-loginForm--mask"></div>');
+			$('{$xf.options.DC_ELF_loginForm_add}, .button--link[href="{{ link('login') }}"]').addClass('DC-customLogin').click(function() {
+				if ( $('body').hasClass('DC-loginForm--show') ) {
+					$('body').removeClass('DC-loginForm--show').find('.DC-loginForm').fadeOut(100);
+				} else {
+					$('body').addClass('DC-loginForm--show').find('.DC-loginForm').fadeIn(100);
+				}
+				
+				$('.DC-loginForm').center();
+			
+				return false;
+			});
+			$(".DC-loginForm--toggle, .DC-loginForm--mask").click(function() {
+				$('body').removeClass('DC-loginForm--show').find('.DC-loginForm').fadeOut(100);
+			});
+		});
+		</script>
+	</xf:if>
+</xf:if>
+
+<xf:if is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'animated'">
+	<xf:js src="DC/EnhancedLoginForm/loginForm_animated.min.js" />
+<xf:elseif is="!$xf.visitor.user_id AND {$xf.options.DC_ELF_loginForm_type} == 'material'"/>
+	<xf:js src="DC/EnhancedLoginForm/loginForm_material.min.js" />
+</xf:if>]]></template>
+</templates>
